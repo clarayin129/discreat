@@ -25,21 +25,36 @@ async function seed() {
 
     const now = new Date()
 
-    const sampleReports: Report[] = Array.from({ length: 10 }, (_, i) => {
-      const offset = i * 300000 // 5 min apart
-      const lat = 37.7749 + i * 0.001 // simulate slight location shifts
-      const lng = -122.4194 + i * 0.001
+    const ucDavisCoords = [
+      { lat: 38.5382, lng: -121.7617 },
+      { lat: 38.5388, lng: -121.7621 },
+      { lat: 38.5390, lng: -121.7630 },
+      { lat: 38.5379, lng: -121.7600 },
+      { lat: 38.5365, lng: -121.7580 }
+    ]
 
+    const capitolCoords = [
+      { lat: 38.5767, lng: -121.4934 },
+      { lat: 38.5770, lng: -121.4941 },
+      { lat: 38.5759, lng: -121.4929 },
+      { lat: 38.5761, lng: -121.4915 },
+      { lat: 38.5755, lng: -121.4930 }
+    ]
+
+    const coords = [...ucDavisCoords, ...capitolCoords]
+
+    const sampleReports: Report[] = coords.map((coord, i) => {
+      const offset = i * 300000 // 5 min apart
       return {
         address: `${100 + i} Test St`,
-        city: ["Rivertown", "Hillcrest", "Oakridge"][i % 3],
+        city: i < 5 ? "Davis" : "Sacramento",
         country: "USA",
         createdAt: new Date(now.getTime() + offset).toISOString(),
         status: ["pending", "in progress", "resolved"][i % 3] as Report["status"],
-        policeDepartment: `${["Rivertown", "Hillcrest", "Oakridge"][i % 3]} PD`,
+        policeDepartment: i < 5 ? "UC Davis PD" : "Sacramento PD",
         location: {
           type: "Point",
-          coordinates: [lng, lat]
+          coordinates: [coord.lng, coord.lat]
         },
         responseTime: i % 3 !== 0 ? 5 + i : undefined,
         resolutionTime: i % 3 === 2 ? 10 + i : undefined
@@ -51,18 +66,21 @@ async function seed() {
 
     const eventSamples: EventLog[] = ids.flatMap((id, i) => {
       const base = now.getTime() + i * 300000
+      const coord = coords[i]
       const logs: EventLog[] = [
         {
           reportId: id,
           type: "help_requested",
           timestamp: new Date(base).toISOString(),
-          note: "Initial request submitted"
+          note: "Initial request submitted",
+          location: coord
         },
         {
           reportId: id,
           type: "responded",
           timestamp: new Date(base + 300000).toISOString(),
-          responderId: `responder_${i}`
+          responderId: `responder_${i}`,
+          location: coord
         }
       ]
 
@@ -71,7 +89,8 @@ async function seed() {
           reportId: id,
           type: "resolved",
           timestamp: new Date(base + 600000).toISOString(),
-          note: "Case closed"
+          note: "Case closed",
+          location: coord
         })
       }
 
@@ -89,7 +108,7 @@ async function seed() {
     await eventLogs.insertMany(eventSamples)
     await notifications.insertMany(notifSamples)
 
-    console.log("✅ Seeded 10 reports with event logs and notifications")
+    console.log("✅ Seeded 10 reports around UC Davis and Sacramento with event logs and notifications")
   } catch (err) {
     console.error("❌ Seed error:", err)
   } finally {

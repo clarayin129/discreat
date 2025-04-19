@@ -35,6 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 var mongodb_1 = require("mongodb");
@@ -42,7 +51,7 @@ var uri = process.env.MONGODB_URI;
 var client = new mongodb_1.MongoClient(uri);
 function seed() {
     return __awaiter(this, void 0, void 0, function () {
-        var db, reports, eventLogs, notifications, now_1, sampleReports, inserted, ids, eventSamples, notifSamples, err_1;
+        var db, reports, eventLogs, notifications, now_1, ucDavisCoords, capitolCoords, coords_1, sampleReports, inserted, ids, eventSamples, notifSamples, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -69,20 +78,33 @@ function seed() {
                 case 5:
                     _a.sent();
                     now_1 = new Date();
-                    sampleReports = Array.from({ length: 10 }, function (_, i) {
+                    ucDavisCoords = [
+                        { lat: 38.5382, lng: -121.7617 },
+                        { lat: 38.5388, lng: -121.7621 },
+                        { lat: 38.5390, lng: -121.7630 },
+                        { lat: 38.5379, lng: -121.7600 },
+                        { lat: 38.5365, lng: -121.7580 }
+                    ];
+                    capitolCoords = [
+                        { lat: 38.5767, lng: -121.4934 },
+                        { lat: 38.5770, lng: -121.4941 },
+                        { lat: 38.5759, lng: -121.4929 },
+                        { lat: 38.5761, lng: -121.4915 },
+                        { lat: 38.5755, lng: -121.4930 }
+                    ];
+                    coords_1 = __spreadArray(__spreadArray([], ucDavisCoords, true), capitolCoords, true);
+                    sampleReports = coords_1.map(function (coord, i) {
                         var offset = i * 300000; // 5 min apart
-                        var lat = 37.7749 + i * 0.001; // simulate slight location shifts
-                        var lng = -122.4194 + i * 0.001;
                         return {
                             address: "".concat(100 + i, " Test St"),
-                            city: ["Rivertown", "Hillcrest", "Oakridge"][i % 3],
+                            city: i < 5 ? "Davis" : "Sacramento",
                             country: "USA",
                             createdAt: new Date(now_1.getTime() + offset).toISOString(),
                             status: ["pending", "in progress", "resolved"][i % 3],
-                            policeDepartment: "".concat(["Rivertown", "Hillcrest", "Oakridge"][i % 3], " PD"),
+                            policeDepartment: i < 5 ? "UC Davis PD" : "Sacramento PD",
                             location: {
                                 type: "Point",
-                                coordinates: [lng, lat]
+                                coordinates: [coord.lng, coord.lat]
                             },
                             responseTime: i % 3 !== 0 ? 5 + i : undefined,
                             resolutionTime: i % 3 === 2 ? 10 + i : undefined
@@ -94,18 +116,21 @@ function seed() {
                     ids = Object.values(inserted.insertedIds).map(function (id) { return id.toString(); });
                     eventSamples = ids.flatMap(function (id, i) {
                         var base = now_1.getTime() + i * 300000;
+                        var coord = coords_1[i];
                         var logs = [
                             {
                                 reportId: id,
                                 type: "help_requested",
                                 timestamp: new Date(base).toISOString(),
-                                note: "Initial request submitted"
+                                note: "Initial request submitted",
+                                location: coord
                             },
                             {
                                 reportId: id,
                                 type: "responded",
                                 timestamp: new Date(base + 300000).toISOString(),
-                                responderId: "responder_".concat(i)
+                                responderId: "responder_".concat(i),
+                                location: coord
                             }
                         ];
                         if (i % 3 === 2) {
@@ -113,7 +138,8 @@ function seed() {
                                 reportId: id,
                                 type: "resolved",
                                 timestamp: new Date(base + 600000).toISOString(),
-                                note: "Case closed"
+                                note: "Case closed",
+                                location: coord
                             });
                         }
                         return logs;
@@ -131,7 +157,7 @@ function seed() {
                     return [4 /*yield*/, notifications.insertMany(notifSamples)];
                 case 8:
                     _a.sent();
-                    console.log("✅ Seeded 10 reports with event logs and notifications");
+                    console.log("✅ Seeded 10 reports around UC Davis and Sacramento with event logs and notifications");
                     return [3 /*break*/, 12];
                 case 9:
                     err_1 = _a.sent();

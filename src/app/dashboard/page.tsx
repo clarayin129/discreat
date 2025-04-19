@@ -1,108 +1,161 @@
+/// <reference types="google.maps" />
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useGoogleMapsReady } from "@/hooks/useGoogleMapsReady"
 
 export default function Dashboard() {
   const router = useRouter()
-  const [reports, setReports] = useState([])
-  const [lat, setLat] = useState("")
-  const [lng, setLng] = useState("")
+  const googleReady = useGoogleMapsReady()
+  const [allReports, setAllReports] = useState<any[]>([])
+  const [reports, setReports] = useState<any[]>([])
+  const [location, setLocation] = useState<{ lat: number; lng: number }>({
+    lat: 38.5449,
+    lng: -121.7405,
+  })
+  const inputRef = useRef<HTMLInputElement>(null)
+  const mapRef = useRef<HTMLDivElement>(null)
 
-  const fetchAllReports = () => {
-    fetch("/api/reports")
-      .then(res => res.json())
-      .then(data => {
-        const sorted = data.sort((a: any, b: any) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-        setReports(sorted)
-      })
-  }
-
-  useEffect(() => {
-    fetchAllReports()
-  }, [])
-
-  const fetchNearbyReports = () => {
-    if (!lat || !lng) return
+  const fetchNearbyReports = (lat: number, lng: number) => {
     fetch(`/api/reports?lat=${lat}&lng=${lng}`)
       .then(res => res.json())
       .then(setReports)
   }
 
+  useEffect(() => {
+    fetch("/api/reports")
+      .then(res => res.json())
+      .then(setAllReports)
+  }, [])
+
+  useEffect(() => {
+    if (location) {
+      fetchNearbyReports(location.lat, location.lng)
+    }
+    
+    if (!googleReady || !inputRef.current) return
+
+    const autocomplete = new google.maps.places.Autocomplete(inputRef.current)
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace()
+      const lat = place.geometry?.location?.lat()
+      const lng = place.geometry?.location?.lng()
+
+      if (lat == null || lng == null) {
+        console.warn("Missing geometry.")
+        return
+      }
+
+      setLocation({ lat, lng })
+      fetchNearbyReports(lat, lng)
+    })
+  }, [googleReady])
+
+  useEffect(() => {
+    console.log("🎯 Effect dependencies:", {
+      googleReady,
+      location,
+      mapRefReady: !!mapRef.current,
+      reportsCount: reports.length,
+    })
+
+    
+    if (!mapRef.current || mapRef.current.offsetHeight === 0) {
+      console.warn("❌ mapRef has no visible height, delaying map render")
+      return
+    }
+
+    if (!googleReady || !location || !mapRef.current) return
+
+    const map = new google.maps.Map(mapRef.current, {
+      center: location,
+      zoom: 14,
+    })
+
+    console.log("✅ Creating map with location:", location)
+    console.log("🧭 mapRef:", mapRef.current)
+
+
+    new google.maps.Marker({
+      position: location,
+      map,
+      label: "📍",
+    })
+
+    reports.forEach((r, i) => {
+      const [lng, lat] = r.location?.coordinates || []
+      if (lat && lng) {
+        new google.maps.Marker({
+          position: { lat, lng },
+          map,
+          label: `${i + 1}`,
+        })
+      }
+    })
+  }, [googleReady, location, reports])
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">All Reports</h1>
 
-      <div className="mb-6 flex gap-4 items-end">
-        <div>
-          <label className="block text-sm font-medium">Latitude</label>
-          <input
-            type="number"
-            value={lat}
-            onChange={e => setLat(e.target.value)}
-            className="border p-2 rounded w-40"
-            placeholder="e.g. 37.7749"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Longitude</label>
-          <input
-            type="number"
-            value={lng}
-            onChange={e => setLng(e.target.value)}
-            className="border p-2 rounded w-40"
-            placeholder="e.g. -122.4194"
-          />
-        </div>
-        <button
-          onClick={fetchNearbyReports}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Find Nearby (1km)
-        </button>
-        <button
-          onClick={fetchAllReports}
-          className="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400"
-        >
-          Reset View
-        </button>
-      </div>
-
-      <table className="w-full border">
+      <table className="w-full border text-sm mb-10">
         <thead>
           <tr className="bg-gray-100 text-left">
-            <th className="p-2">Id</th>
-            <th className="p-2">Police Department</th>
+            <th className="p-2">ID</th>
             <th className="p-2">Status</th>
-            <th className="p-2">Requested At</th>
+            <th className="p-2">Police Dept</th>
+            <th className="p-2">Created</th>
             <th className="p-2">Actions</th>
-            <th className="p-2">Live Chat</th>
+          </tr>
+        </thead>
+        <tbody>
+          {allReports.map((r: any) => (
+            <tr key={r._id} className="border-t">
+              <td className="p-2">{r._id}</td>
+              <td className="p-2">{r.status}</td>
+              <td className="p-2">{r.policeDepartment}</td>
+              <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
+              <td className="p-2 space-x-2">
+                <button onClick={() => router.push(`/dashboard/${r._id}`)} className="text-blue-500 underline">View</button>
+                <button onClick={() => router.push(`/chat/${r._id}`)} className="text-green-500 underline">Chat</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h2 className="text-xl font-bold mb-4">Search Reports by Place</h2>
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="Search a place..."
+        className="w-full p-2 border rounded mb-4"
+      />
+
+      <div ref={mapRef} className="w-full h-[400px] border rounded mb-6" />
+
+      <h2 className="text-xl font-semibold mb-2">Nearby Reports</h2>
+      <table className="w-full border text-sm">
+        <thead>
+          <tr className="bg-gray-100 text-left">
+            <th className="p-2">ID</th>
+            <th className="p-2">Status</th>
+            <th className="p-2">Police Dept</th>
+            <th className="p-2">Created</th>
+            <th className="p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {reports.map((r: any) => (
             <tr key={r._id} className="border-t">
               <td className="p-2">{r._id}</td>
-              <td className="p-2">{r.policeDepartment}</td>
               <td className="p-2">{r.status}</td>
+              <td className="p-2">{r.policeDepartment}</td>
               <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
-              <td className="p-2">
-                <button
-                  onClick={() => router.push(`/dashboard/${r._id}`)}
-                  className="text-blue-500 underline"
-                >
-                  View
-                </button>
-              </td>
-              <td className="p-2">
-                <button
-                  onClick={() => router.push(`/chat/${r._id}`)}
-                  className="text-green-500 underline"
-                >
-                  Open Chat
-                </button>
+              <td className="p-2 space-x-2">
+                <button onClick={() => router.push(`/dashboard/${r._id}`)} className="text-blue-500 underline">View</button>
+                <button onClick={() => router.push(`/chat/${r._id}`)} className="text-green-500 underline">Chat</button>
               </td>
             </tr>
           ))}
@@ -111,4 +164,3 @@ export default function Dashboard() {
     </div>
   )
 }
-
