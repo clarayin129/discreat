@@ -1,13 +1,11 @@
 export interface Report {
     id?: string
-    callerId: string
-    responderId?: string
-    location: {
-      lat: number
-      lng: number
-    }
-    status: "pending" | "in_progress" | "resolved"
+    address: string
+    city: string
+    country: string
     createdAt: string
+    status: "pending" | "in progress" | "resolved"
+    policeDepartment: string
     responseTime?: number
     resolutionTime?: number
   }

@@ -18,9 +18,14 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json()
   const newReport: Report = {
-    ...body,
+    address: body.address,
+    city: body.city,
+    country: body.country,
+    policeDepartment: body.policeDepartment,
     createdAt: new Date().toISOString(),
-    status: "pending"
+    status: "pending",
+    responseTime: undefined,
+    resolutionTime: undefined
   }
 
   const result = await reports.insertOne(newReport)
