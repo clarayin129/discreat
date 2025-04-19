@@ -20,16 +20,18 @@ export default function Dashboard() {
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-100 text-left">
-            <th className="p-2">Caller</th>
+            <th className="p-2">Id</th>
+            <th className="p-2">Police Department</th>
             <th className="p-2">Status</th>
-            <th className="p-2">Created</th>
+            <th className="p-2">Requested At</th>
             <th className="p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {reports.map((r: any) => (
             <tr key={r._id} className="border-t">
-              <td className="p-2">{r.callerId}</td>
+              <td className="p-2">{r._id}</td>
+              <td className="p-2">{r.policeDepartment}</td>
               <td className="p-2">{r.status}</td>
               <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
               <td className="p-2">
