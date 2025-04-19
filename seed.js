@@ -46,7 +46,7 @@ function seed() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 8, 9, 11]);
+                    _a.trys.push([0, 9, 10, 12]);
                     return [4 /*yield*/, client.connect()];
                 case 1:
                     _a.sent();
@@ -54,18 +54,25 @@ function seed() {
                     reports = db.collection("reports");
                     eventLogs = db.collection("event_logs");
                     notifications = db.collection("notifications");
-                    return [4 /*yield*/, reports.deleteMany({})];
+                    // Create 2dsphere index for geospatial queries
+                    return [4 /*yield*/, reports.createIndex({ location: "2dsphere" })];
                 case 2:
+                    // Create 2dsphere index for geospatial queries
                     _a.sent();
-                    return [4 /*yield*/, eventLogs.deleteMany({})];
+                    return [4 /*yield*/, reports.deleteMany({})];
                 case 3:
                     _a.sent();
-                    return [4 /*yield*/, notifications.deleteMany({})];
+                    return [4 /*yield*/, eventLogs.deleteMany({})];
                 case 4:
+                    _a.sent();
+                    return [4 /*yield*/, notifications.deleteMany({})];
+                case 5:
                     _a.sent();
                     now_1 = new Date();
                     sampleReports = Array.from({ length: 10 }, function (_, i) {
                         var offset = i * 300000; // 5 min apart
+                        var lat = 37.7749 + i * 0.001; // simulate slight location shifts
+                        var lng = -122.4194 + i * 0.001;
                         return {
                             address: "".concat(100 + i, " Test St"),
                             city: ["Rivertown", "Hillcrest", "Oakridge"][i % 3],
@@ -73,12 +80,16 @@ function seed() {
                             createdAt: new Date(now_1.getTime() + offset).toISOString(),
                             status: ["pending", "in progress", "resolved"][i % 3],
                             policeDepartment: "".concat(["Rivertown", "Hillcrest", "Oakridge"][i % 3], " PD"),
+                            location: {
+                                type: "Point",
+                                coordinates: [lng, lat]
+                            },
                             responseTime: i % 3 !== 0 ? 5 + i : undefined,
                             resolutionTime: i % 3 === 2 ? 10 + i : undefined
                         };
                     });
                     return [4 /*yield*/, reports.insertMany(sampleReports)];
-                case 5:
+                case 6:
                     inserted = _a.sent();
                     ids = Object.values(inserted.insertedIds).map(function (id) { return id.toString(); });
                     eventSamples = ids.flatMap(function (id, i) {
@@ -115,22 +126,22 @@ function seed() {
                         timestamp: new Date(now_1.getTime() + i * 300000 + 120000).toISOString()
                     }); });
                     return [4 /*yield*/, eventLogs.insertMany(eventSamples)];
-                case 6:
-                    _a.sent();
-                    return [4 /*yield*/, notifications.insertMany(notifSamples)];
                 case 7:
                     _a.sent();
-                    console.log("✅ Seeded 10 reports with event logs and notifications");
-                    return [3 /*break*/, 11];
+                    return [4 /*yield*/, notifications.insertMany(notifSamples)];
                 case 8:
+                    _a.sent();
+                    console.log("✅ Seeded 10 reports with event logs and notifications");
+                    return [3 /*break*/, 12];
+                case 9:
                     err_1 = _a.sent();
                     console.error("❌ Seed error:", err_1);
-                    return [3 /*break*/, 11];
-                case 9: return [4 /*yield*/, client.close()];
-                case 10:
+                    return [3 /*break*/, 12];
+                case 10: return [4 /*yield*/, client.close()];
+                case 11:
                     _a.sent();
                     return [7 /*endfinally*/];
-                case 11: return [2 /*return*/];
+                case 12: return [2 /*return*/];
             }
         });
     });

@@ -16,6 +16,9 @@ async function seed() {
     const eventLogs = db.collection<EventLog>("event_logs")
     const notifications = db.collection<Notification>("notifications")
 
+    // Create 2dsphere index for geospatial queries
+    await reports.createIndex({ location: "2dsphere" })
+
     await reports.deleteMany({})
     await eventLogs.deleteMany({})
     await notifications.deleteMany({})
@@ -24,6 +27,9 @@ async function seed() {
 
     const sampleReports: Report[] = Array.from({ length: 10 }, (_, i) => {
       const offset = i * 300000 // 5 min apart
+      const lat = 37.7749 + i * 0.001 // simulate slight location shifts
+      const lng = -122.4194 + i * 0.001
+
       return {
         address: `${100 + i} Test St`,
         city: ["Rivertown", "Hillcrest", "Oakridge"][i % 3],
@@ -31,6 +37,10 @@ async function seed() {
         createdAt: new Date(now.getTime() + offset).toISOString(),
         status: ["pending", "in progress", "resolved"][i % 3] as Report["status"],
         policeDepartment: `${["Rivertown", "Hillcrest", "Oakridge"][i % 3]} PD`,
+        location: {
+          type: "Point",
+          coordinates: [lng, lat]
+        },
         responseTime: i % 3 !== 0 ? 5 + i : undefined,
         resolutionTime: i % 3 === 2 ? 10 + i : undefined
       }

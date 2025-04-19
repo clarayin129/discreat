@@ -3,10 +3,33 @@ import { ObjectId } from "mongodb"
 import clientPromise from "@/app/lib/mongodb"
 import { Report } from "@/types/report"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const client = await clientPromise
   const db = client.db("safehub")
   const reports = db.collection<Report>("reports")
+
+  const { searchParams } = new URL(req.url)
+  const lat = searchParams.get("lat")
+  const lng = searchParams.get("lng")
+
+  if (lat && lng) {
+    const nearby = await reports
+      .find({
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [parseFloat(lng), parseFloat(lat)]
+            },
+            $maxDistance: 1000 // 1 km
+          }
+        }
+      })
+      .toArray()
+
+    return NextResponse.json(nearby)
+  }
+
   const all = await reports.find().sort({ createdAt: -1 }).toArray()
   return NextResponse.json(all)
 }
@@ -24,6 +47,7 @@ export async function POST(req: NextRequest) {
     policeDepartment: body.policeDepartment,
     createdAt: new Date().toISOString(),
     status: "pending",
+    location: body.location, // must include GeoJSON { type: "Point", coordinates: [lng, lat] }
     responseTime: undefined,
     resolutionTime: undefined
   }
