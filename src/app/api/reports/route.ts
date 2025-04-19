@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
               type: "Point",
               coordinates: [parseFloat(lng), parseFloat(lat)]
             },
-            $maxDistance: 1000 // 1 km
+            $maxDistance: 3000 // 1 km
           }
         }
       })

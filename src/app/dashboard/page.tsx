@@ -33,7 +33,7 @@ export default function Dashboard() {
     if (location) {
       fetchNearbyReports(location.lat, location.lng)
     }
-    
+
     if (!googleReady || !inputRef.current) return
 
     const autocomplete = new google.maps.places.Autocomplete(inputRef.current)
@@ -86,10 +86,24 @@ export default function Dashboard() {
     reports.forEach((r, i) => {
       const [lng, lat] = r.location?.coordinates || []
       if (lat && lng) {
-        new google.maps.Marker({
+        const marker = new google.maps.Marker({
           position: { lat, lng },
           map,
           label: `${i + 1}`,
+        })
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="font-size: 14px;">
+              <strong>ID:</strong> ${r._id}<br/>
+              <strong>Status:</strong> ${r.status}<br/>
+              <strong>Created:</strong> ${new Date(r.createdAt).toLocaleString()}
+            </div>
+          `,
+        })
+
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker)
         })
       }
     })
