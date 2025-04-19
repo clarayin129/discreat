@@ -11,7 +11,10 @@ export default function Dashboard() {
   useEffect(() => {
     fetch("/api/reports")
       .then(res => res.json())
-      .then(data => setReports(data))
+      .then(data => {
+        const sorted = data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        setReports(sorted)
+      })
   }, [])
 
   return (
@@ -25,6 +28,7 @@ export default function Dashboard() {
             <th className="p-2">Status</th>
             <th className="p-2">Requested At</th>
             <th className="p-2">Actions</th>
+            <th className="p-2">Live Chat</th>
           </tr>
         </thead>
         <tbody>
@@ -36,10 +40,18 @@ export default function Dashboard() {
               <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
               <td className="p-2">
                 <button
-                    onClick={() => router.push(`/dashboard/${r._id}`)}
-                    className="text-blue-500 underline"
+                  onClick={() => router.push(`/dashboard/${r._id}`)}
+                  className="text-blue-500 underline"
                 >
-                View
+                  View
+                </button>
+              </td>
+              <td className="p-2">
+                <button
+                  onClick={() => router.push(`/chat/${r._id}`)}
+                  className="text-green-500 underline"
+                >
+                  Open Chat
                 </button>
               </td>
             </tr>
@@ -49,3 +61,4 @@ export default function Dashboard() {
     </div>
   )
 }
+

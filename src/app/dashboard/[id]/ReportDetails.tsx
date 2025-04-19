@@ -28,12 +28,20 @@ export default function ReportDetails({ id }: { id: string }) {
 
   return (
     <div className="p-6">
-      <button
-        onClick={() => router.push("/dashboard")}
-        className="mb-4 px-4 py-2 bg-gray-200 text-sm rounded hover:bg-gray-300"
-      >
-        ← Back to Dashboard
-      </button>
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => router.push("/dashboard")}
+          className="px-4 py-2 bg-gray-200 text-sm rounded hover:bg-gray-300"
+        >
+          ← Back to Dashboard
+        </button>
+        <button
+          onClick={() => router.push(`/chat/${report._id}`)}
+          className="px-4 py-2 bg-blue-100 text-sm rounded hover:bg-blue-200"
+        >
+          💬 Open Chat
+        </button>
+      </div>
 
       <h1 className="text-2xl font-bold mb-4">Report Details</h1>
 
@@ -99,3 +107,4 @@ export default function ReportDetails({ id }: { id: string }) {
     </div>
   )
 }
+
