@@ -65,37 +65,63 @@ async function seed() {
     const ids = Object.values(inserted.insertedIds).map((id) => id.toString())
 
     const eventSamples: EventLog[] = ids.flatMap((id, i) => {
-      const base = now.getTime() + i * 300000
-      const coord = coords[i]
-      const logs: EventLog[] = [
-        {
-          reportId: id,
-          type: "help_requested",
-          timestamp: new Date(base).toISOString(),
-          note: "Initial request submitted",
-          location: coord
-        },
-        {
-          reportId: id,
-          type: "responded",
-          timestamp: new Date(base + 300000).toISOString(),
-          responderId: `responder_${i}`,
-          location: coord
+        const base = now.getTime() + i * 300000
+        const baseCoord = coords[i]
+        const [baseLat, baseLng] = [baseCoord.lat, baseCoord.lng]
+        const randomOffset = () => (Math.random() - 0.5) * 0.004
+      
+        const trail: { lat: number; lng: number }[] = [
+            { lat: baseLat, lng: baseLng },
+            {
+              lat: baseLat + randomOffset(),
+              lng: baseLng + randomOffset(),
+            },
+            {
+              lat: baseLat + randomOffset(),
+              lng: baseLng + randomOffset(),
+            },
+            {
+                lat: baseLat + randomOffset(),
+                lng: baseLng + randomOffset(),
+              },
+        ]
+      
+        const logs: EventLog[] = [
+          {
+            reportId: id,
+            type: "help_requested",
+            timestamp: new Date(base).toISOString(),
+            note: "Initial request submitted",
+            location: trail[0]
+          },
+          {
+            reportId: id,
+            type: "responded",
+            timestamp: new Date(base + 300000).toISOString(),
+            responderId: `responder_${i}`,
+            location: trail[1]
+          },
+          {
+            reportId: id,
+            type: "arrived",
+            timestamp: new Date(base + 600000).toISOString(),
+            note: "Arrived at the scene",
+            location: trail[2]
+          }
+        ]
+      
+        if (i % 3 === 2) {
+          logs.push({
+            reportId: id,
+            type: "resolved",
+            timestamp: new Date(base + 900000).toISOString(),
+            note: "Case closed",
+            location: trail[2]
+          })
         }
-      ]
-
-      if (i % 3 === 2) {
-        logs.push({
-          reportId: id,
-          type: "resolved",
-          timestamp: new Date(base + 600000).toISOString(),
-          note: "Case closed",
-          location: coord
-        })
-      }
-
-      return logs
-    })
+      
+        return logs
+      })      
 
     const notifSamples: Notification[] = ids.map((id, i) => ({
       reportId: id,

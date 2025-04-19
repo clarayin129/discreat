@@ -116,30 +116,54 @@ function seed() {
                     ids = Object.values(inserted.insertedIds).map(function (id) { return id.toString(); });
                     eventSamples = ids.flatMap(function (id, i) {
                         var base = now_1.getTime() + i * 300000;
-                        var coord = coords_1[i];
+                        var baseCoord = coords_1[i];
+                        var _a = [baseCoord.lat, baseCoord.lng], baseLat = _a[0], baseLng = _a[1];
+                        var randomOffset = function () { return (Math.random() - 0.5) * 0.004; };
+                        var trail = [
+                            { lat: baseLat, lng: baseLng },
+                            {
+                                lat: baseLat + randomOffset(),
+                                lng: baseLng + randomOffset(),
+                            },
+                            {
+                                lat: baseLat + randomOffset(),
+                                lng: baseLng + randomOffset(),
+                            },
+                            {
+                                lat: baseLat + randomOffset(),
+                                lng: baseLng + randomOffset(),
+                            },
+                        ];
                         var logs = [
                             {
                                 reportId: id,
                                 type: "help_requested",
                                 timestamp: new Date(base).toISOString(),
                                 note: "Initial request submitted",
-                                location: coord
+                                location: trail[0]
                             },
                             {
                                 reportId: id,
                                 type: "responded",
                                 timestamp: new Date(base + 300000).toISOString(),
                                 responderId: "responder_".concat(i),
-                                location: coord
+                                location: trail[1]
+                            },
+                            {
+                                reportId: id,
+                                type: "arrived",
+                                timestamp: new Date(base + 600000).toISOString(),
+                                note: "Arrived at the scene",
+                                location: trail[2]
                             }
                         ];
                         if (i % 3 === 2) {
                             logs.push({
                                 reportId: id,
                                 type: "resolved",
-                                timestamp: new Date(base + 600000).toISOString(),
+                                timestamp: new Date(base + 900000).toISOString(),
                                 note: "Case closed",
-                                location: coord
+                                location: trail[2]
                             });
                         }
                         return logs;
