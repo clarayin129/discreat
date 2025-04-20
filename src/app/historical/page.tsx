@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -74,7 +75,7 @@ export default function HistoricalCharts() {
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => router.push("/dashboard")}
-          className="px-4 py-2 bg-gray-200 text-sm rounded-lg hover:bg-gray-300"
+          className="px-4 py-2 bg-gray-200 text-orange-900 text-sm rounded-lg hover:bg-gray-300"
         >
           ← Back to Dashboard
         </button>
@@ -104,6 +105,20 @@ export default function HistoricalCharts() {
             pointSize={8}
             pointBorderWidth={2}
             useMesh={true}
+            tooltip={({ point }) => (
+              <div
+                style={{
+                  padding: "6px 12px",
+                  background: "#1f1f1f",
+                  color: "#fdba74",
+                  borderRadius: "4px",
+                  fontSize: "0.875rem",
+                  boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
+                }}
+              >
+                <strong>{point.data.xFormatted}</strong>: {point.data.yFormatted} reports
+              </div>
+            )}            
           />
         </div>
       </div>
@@ -136,6 +151,20 @@ export default function HistoricalCharts() {
             labelSkipHeight={12}
             labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
             borderColor={{ from: "color", modifiers: [["darker", 0.6]] }}
+            tooltip={({ id, value, indexValue }) => (
+              <div
+                style={{
+                  padding: "6px 12px",
+                  background: "#1f1f1f",
+                  color: "#fdba74",
+                  borderRadius: "4px",
+                  fontSize: "0.875rem",
+                  boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
+                }}
+              >
+                <strong>{indexValue}</strong>: {value} min avg
+              </div>
+            )}            
           />
         </div>
       </div>
@@ -160,10 +189,19 @@ export default function HistoricalCharts() {
             arcLabelsSkipAngle={10}
             arcLabelsTextColor={{ from: "color", modifiers: [["darker", 2]] }}
             tooltip={({ datum }) => (
-              <div className="text-sm px-2 py-1 bg-white border rounded-lg shadow">
+              <div
+                style={{
+                  padding: "6px 12px",
+                  background: "#1f1f1f",
+                  color: "#fdba74",
+                  borderRadius: "4px",
+                  fontSize: "0.875rem",
+                  boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
+                }}
+              >
                 <strong>{datum.id}</strong>: {datum.data.raw} reports
               </div>
-            )}
+            )}            
           />
         </div>
       </div>

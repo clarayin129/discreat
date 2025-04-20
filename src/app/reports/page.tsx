@@ -123,7 +123,7 @@ export default function reports() {
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => router.push("/dashboard")}
-          className="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-300"
+          className="px-4 py-2 bg-gray-100 text-orange-900 text-sm rounded-lg hover:bg-gray-300"
         >
           ← Back to Dashboard
         </button>
@@ -134,33 +134,33 @@ export default function reports() {
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-slate-200 z-10">
             <tr className="text-left">
-              <th className="p-4">ID</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Police Dept</th>
-              <th className="p-2">Created</th>
-              <th className="p-2">Response Time</th>
-              <th className="p-2">Resolution Time</th>
-              <th className="p-2">Actions</th>
+              <th className="p-4 text-orange-900">ID</th>
+              <th className="p-2 text-orange-900">Status</th>
+              <th className="p-2 text-orange-900">Police Dept</th>
+              <th className="p-2 text-orange-900">Created</th>
+              <th className="p-2 text-orange-900">Response Time</th>
+              <th className="p-2 text-orange-900">Resolution Time</th>
+              <th className="p-2 text-orange-900">Actions</th>
             </tr>
           </thead>
           <tbody>
             {allReports.map((r) => (
               <tr key={r._id} className="border-t bg-slate-50">
-                <td className="p-4">{r._id}</td>
-                <td className="p-2">
-                  <span className={`px-2 py-2 rounded-lg text-xs font-medium ${getStatusColor(r.status)}`}>
+                <td className="p-4 text-orange-900">{r._id}</td>
+                <td className="p-2 text-orange-900">
+                  <span className={`px-2 py-2 rounded-lg text-xs text-orange-900 font-medium ${getStatusColor(r.status)}`}>
                     {r.status}
                   </span>
                 </td>
-                <td className="p-2">{r.policeDepartment}</td>
-                <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
-                <td className="p-2">
+                <td className="p-2 text-orange-900">{r.policeDepartment}</td>
+                <td className="p-2 text-orange-900">{new Date(r.createdAt).toLocaleString()}</td>
+                <td className="p-2 text-orange-900">
                   {typeof r.responseTime === "number" ? `${r.responseTime} min` : "—"}
                 </td>
-                <td className="p-2">
+                <td className="p-2 text-orange-900">
                   {typeof r.resolutionTime === "number" ? `${r.resolutionTime} min` : "—"}
                 </td>
-                <td className="p-2 space-x-2">
+                <td className="p-2 text-orange-900 space-x-2">
                   <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-lg px-4 py-2 hover:bg-orange-500">
                     View
                   </button>
@@ -185,29 +185,29 @@ export default function reports() {
       <div ref={mapRef} className="w-full h-[550px] border rounded-lg mb-6" />
 
       <h2 className="text-xl font-semibold mb-2">Nearby Reports (within 3 km)</h2>
-      <div className="max-h-[400px] overflow-y-auto rounded-lg-lg">
+      <div className="max-h-[400px] overflow-y-auto rounded-lg">
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-slate-200 z-10">
             <tr className="text-left">
-              <th className="p-4">ID</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Police Dept</th>
-              <th className="p-2">Created</th>
-              <th className="p-2">Actions</th>
+              <th className="p-4 text-orange-900">ID</th>
+              <th className="p-2 text-orange-900">Status</th>
+              <th className="p-2 text-orange-900">Police Dept</th>
+              <th className="p-2 text-orange-900">Created</th>
+              <th className="p-2 text-orange-900">Actions</th>
             </tr>
           </thead>
           <tbody>
             {reports.map((r) => (
               <tr key={r._id} className="border-t bg-slate-50">
-                <td className="p-4">{r._id}</td>
-                <td className="p-2">
+                <td className="p-4 text-orange-900">{r._id}</td>
+                <td className="p-2 text-orange-900">
                   <span className={`px-2 py-2 rounded-lg text-xs font-medium ${getStatusColor(r.status)}`}>
                     {r.status}
                   </span>
                 </td>
-                <td className="p-2">{r.policeDepartment}</td>
-                <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
-                <td className="p-2 space-x-2">
+                <td className="p-2 text-orange-900">{r.policeDepartment}</td>
+                <td className="p-2 text-orange-900">{new Date(r.createdAt).toLocaleString()}</td>
+                <td className="p-2 text-orange-900 space-x-2">
                   <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-lg px-4 py-2 hover:bg-orange-500">
                     View
                   </button>

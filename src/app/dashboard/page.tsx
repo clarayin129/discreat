@@ -37,21 +37,21 @@ export default function DashboardPage() {
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1 min-w-[300px]">
           <div className="bg-white shadow rounded-lg p-4 mb-6 border">
-            <h2 className="text-xl font-semibold">Total Reports</h2>
+            <h2 className="text-xl font-semibold text-orange-900">Total Reports</h2>
             <p className="text-4xl mt-2 text-orange-600 font-bold">
               {reports.length}
             </p>
           </div>
 
           <div className="bg-white shadow rounded-lg p-4 border mb-6">
-            <h2 className="text-xl font-semibold mb-4">Recent Reports</h2>
+            <h2 className="text-xl font-semibold mb-4 text-orange-900">Recent Reports</h2>
             {recentReports.map((r) => (
               <div
                 key={r._id}
                 className="border-b py-2 flex justify-between items-center"
               >
                 <div className="flex flex-col gap-1">
-                  <p className="font-medium">{r.policeDepartment}</p>
+                  <p className="font-medium text-orange-900">{r.policeDepartment}</p>
                   <p className="text-sm text-gray-600">
                     {new Date(r.createdAt).toLocaleString()}
                   </p>

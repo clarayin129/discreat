@@ -60,6 +60,21 @@ export default function ReportHeatMap() {
         borderWidth={1}
         borderColor={{ from: "color", modifiers: [["darker", 0.3]] }}
         labelTextColor={{ from: "color", modifiers: [["darker", 1.5]] }}
+        tooltip={({ cell }) => (
+          <div
+            style={{
+              padding: "6px 12px",
+              background: "#1f1f1f",
+              color: "#fdba74",
+              borderRadius: "4px",
+              fontSize: "0.875rem",
+              boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
+            }}
+          >
+            <strong>Reports:</strong> {cell.value}
+          </div>
+        )}
+        
       />
     </div>
   )

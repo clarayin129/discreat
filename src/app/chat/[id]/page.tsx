@@ -132,13 +132,13 @@ export default function ChatPage() {
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => router.push("/reports")}
-          className="bg-gray-200 px-4 py-2 rounded-lg text-sm hover:bg-gray-300"
+          className="bg-gray-200 text-orange-900 px-4 py-2 rounded-lg text-sm hover:bg-gray-300"
         >
           ← Back to reports
         </button>
         <button
           onClick={() => router.push(`/reports/${id}`)}
-          className="bg-orange-200 px-4 py-2 rounded-lg text-sm hover:bg-orange-300"
+          className="bg-orange-200 text-orange-900 px-4 py-2 rounded-lg text-sm hover:bg-orange-300"
         >
           📄 View Report Details
         </button>
@@ -148,7 +148,7 @@ export default function ChatPage() {
 
       {report && (
         <>
-          <p className="flex items-center gap-2 mb-2">
+          <p className="flexitems-center gap-2 mb-2">
             <span
               className={`px-2 py-1 rounded-lg text-sm font-medium ${getStatusColor(
                 report.status
@@ -157,7 +157,7 @@ export default function ChatPage() {
               {report.status}
             </span>
           </p>
-          <div className="bg-gray-100 rounded-lg p-4 mb-4 text-sm">
+          <div className="bg-gray-100  text-orange-900 rounded-lg p-4 mb-4 text-sm">
             <p>
               <strong>Report ID:</strong> {report._id}
             </p>
@@ -176,7 +176,7 @@ export default function ChatPage() {
         </>
       )}
 
-      <div className="mb-2 text-sm text-gray-700 italic">
+      <div className="mb-2 text-sm text-white italic">
         Currently sending as: <strong>{senderRole}</strong>
       </div>
 

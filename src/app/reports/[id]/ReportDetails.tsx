@@ -103,13 +103,13 @@ export default function ReportDetails({ id }: { id: string }) {
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => router.push("/reports")}
-          className="px-4 py-2 bg-gray-200 text-sm rounded-lg hover:bg-gray-300"
+          className="px-4 py-2 text-orange-900 bg-gray-200 text-sm rounded-lg hover:bg-gray-300"
         >
           ← Back to reports
         </button>
         <button
           onClick={() => router.push(`/chat/${report._id}`)}
-          className="px-4 py-2 bg-orange-200 text-sm rounded-lg hover:bg-orange-300"
+          className="px-4 py-2 text-orange-900 bg-orange-200 text-sm rounded-lg hover:bg-orange-300"
         >
           💬 Open Chat
         </button>
@@ -170,7 +170,7 @@ export default function ReportDetails({ id }: { id: string }) {
         {/* Event Logs Table */}
         <div className="w-full md:w-1/2">
           <h2 className="text-xl font-semibold mb-2">Event Logs</h2>
-          <div className="max-h-[400px] overflow-y-auto rounded-lg">
+          <div className="max-h-[400px] text-orange-900 overflow-y-auto rounded-lg">
             <table className="w-full text-sm table-fixed">
               <thead className="sticky top-0 bg-slate-200 z-10">
                 <tr>
@@ -204,7 +204,7 @@ export default function ReportDetails({ id }: { id: string }) {
         {/* Notifications Table */}
         <div className="w-full md:w-1/2">
           <h2 className="text-xl font-semibold mb-2">Notifications</h2>
-          <div className="max-h-[400px] overflow-y-auto rounded-lg">
+          <div className="max-h-[400px] text-orange-900 overflow-y-auto rounded-lg">
             <table className="w-full text-sm table-fixed">
               <thead className="sticky top-0 bg-slate-200 z-10">
                 <tr>
@@ -214,7 +214,7 @@ export default function ReportDetails({ id }: { id: string }) {
                   <th className="p-2 text-left">Responded</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="border-t bg-slate-50">
                 {notifications.map((note) => (
                   <tr key={note._id} className="border-t">
                     <td className="p-4">{note.message}</td>

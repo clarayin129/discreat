@@ -3,21 +3,20 @@
 :root {
   --font-sans: var(--font-urbanist);
   --font-mono: var(--font-fira);
-  --foreground: #111827;
-  --accent: #eb2a14;
+  --foreground: #f3f4f6;
+  --accent: #f97452;
 
-  /* Angular gradient based on your color stops */
   --background: conic-gradient(
     from 180deg at center,
-    #EB2A14 0%,
-    #F25729 25%,
-    #F89233 38%,
-    #FBAF35 44%,
-    #FDC238 50%,
-    #FDCB39 75%,
-    #FAA734 88%,
-    #EF461D 94%,
-    #EB2B14 100%
+    #4b0c07 0%,
+    #69200f 25%,
+    #7a3e17 38%,
+    #8f561b 44%,
+    #a06e1e 50%,
+    #a87d1d 75%,
+    #a95e1b 88%,
+    #84200d 94%,
+    #4c0d05 100%
   );
 }
 
@@ -27,27 +26,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-}
-
-/* 🌒 Dark Mode – deeper versions of same tones */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground: #f3f4f6;
-    --accent: #f97452;
-
-    --background: conic-gradient(
-      from 180deg at center,
-      #4b0c07 0%,
-      #69200f 25%,
-      #7a3e17 38%,
-      #8f561b 44%,
-      #a06e1e 50%,
-      #a87d1d 75%,
-      #a95e1b 88%,
-      #84200d 94%,
-      #4c0d05 100%
-    );
-  }
 }
 
 /* ✨ Apply it globally */
