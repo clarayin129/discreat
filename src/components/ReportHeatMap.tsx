@@ -37,45 +37,58 @@ export default function ReportHeatMap() {
   return (
     <div style={{ height: 400 }}>
       <ResponsiveHeatMap
-        data={data}
-        valueFormat=".0f"
-        margin={{ top: 40, right: 40, bottom: 60, left: 110 }}
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 5,
-          tickPadding: 5,
-          legend: "Category",
-          legendPosition: "middle",
-          legendOffset: -36
-        }}
-        axisLeft={{
-          tickSize: 5,
-          tickPadding: 5,
-          legend: "City",
-          legendPosition: "middle",
-          legendOffset: -80
-        }}
-        colors={{ type: "quantize", scheme: "yellow_orange_red" }}
-        borderWidth={1}
-        borderColor={{ from: "color", modifiers: [["darker", 0.3]] }}
-        labelTextColor={{ from: "color", modifiers: [["darker", 1.5]] }}
-        tooltip={({ cell }) => (
-          <div
-            style={{
-              padding: "6px 12px",
-              background: "#1f1f1f",
-              color: "#fdba74",
-              borderRadius: "4px",
-              fontSize: "0.875rem",
-              boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
-            }}
-          >
-            <strong>Reports:</strong> {cell.value}
-          </div>
-        )}
-        
-      />
+  data={data}
+  valueFormat=".0f"
+  margin={{ top: 40, right: 40, bottom: 60, left: 110 }}
+  axisTop={null}
+  axisRight={null}
+  axisBottom={{
+    tickSize: 5,
+    tickPadding: 5,
+    legend: "Category",
+    legendPosition: "middle",
+    legendOffset: -36
+  }}
+  axisLeft={{
+    tickSize: 5,
+    tickPadding: 5,
+    legend: "City",
+    legendPosition: "middle",
+    legendOffset: -80
+  }}
+  colors={{ type: "quantize", scheme: "yellow_orange_red" }}
+  borderWidth={1}
+  borderColor={{ from: "color", modifiers: [["darker", 0.3]] }}
+  labelTextColor={{ from: "color", modifiers: [["darker", 0.5]] }}
+  theme={{
+    axis: {
+      ticks: {
+        text: {
+          fill: "#ffffff", // make tick labels white
+        },
+      },
+      legend: {
+        text: {
+          fill: "#ffffff", // make axis legends white
+        },
+      },
+    },
+  }}
+  tooltip={({ cell }) => (
+    <div
+      style={{
+        padding: "6px 12px",
+        background: "#1f1f1f",
+        color: "#fdba74",
+        borderRadius: "4px",
+        fontSize: "0.875rem",
+        boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
+      }}
+    >
+      <strong>Reports:</strong> {cell.value}
+    </div>
+  )}
+/>
     </div>
   )
 }
