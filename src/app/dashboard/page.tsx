@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import ReportHeatMap from "../../components/ReportHeatMap"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import ReportHeatMap from "../../components/ReportHeatMap";
 
 export default function DashboardPage() {
-  const router = useRouter()
-  const [reports, setReports] = useState<any[]>([])
+  const router = useRouter();
+  const [reports, setReports] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("/api/reports")
-      .then(res => res.json())
-      .then(data => setReports(data))
-  }, [])
+      .then((res) => res.json())
+      .then((data) => setReports(data));
+  }, []);
 
-  const recentReports = reports.slice(0, 3)
+  const recentReports = reports.slice(0, 3);
 
   return (
     <div className="p-6 max-w-7xl mx-auto my-auto">
@@ -25,7 +25,9 @@ export default function DashboardPage() {
         <div className="flex-1 min-w-[300px]">
           <div className="bg-white shadow rounded p-4 mb-6 border">
             <h2 className="text-xl font-semibold">Total Reports</h2>
-            <p className="text-4xl mt-2 text-blue-600 font-bold">{reports.length}</p>
+            <p className="text-4xl mt-2 text-orange-600 font-bold">
+              {reports.length}
+            </p>
           </div>
 
           <div className="bg-white shadow rounded p-4 border mb-6">
@@ -37,12 +39,14 @@ export default function DashboardPage() {
               >
                 <div>
                   <p className="font-medium">{r.policeDepartment}</p>
-                  <p className="text-sm text-gray-600">{new Date(r.createdAt).toLocaleString()}</p>
+                  <p className="text-sm text-gray-600">
+                    {new Date(r.createdAt).toLocaleString()}
+                  </p>
                   <p className="text-sm text-gray-800">Status: {r.status}</p>
                 </div>
                 <button
                   onClick={() => router.push(`/reports/${r._id}`)}
-                  className="text-blue-600 underline text-sm"
+                  className="text-orange-600 underline text-sm"
                 >
                   View
                 </button>
@@ -52,14 +56,14 @@ export default function DashboardPage() {
 
           <button
             onClick={() => router.push("/reports")}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700"
           >
             View All Reports →
           </button>
           <button
             onClick={() => router.push("/historical")}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 ml-2"
-            >
+            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 ml-2"
+          >
             View Historical Data →
           </button>
         </div>
@@ -72,6 +76,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

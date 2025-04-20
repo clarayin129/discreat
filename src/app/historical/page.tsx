@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useEffect, useState } from "react"
@@ -89,7 +90,7 @@ export default function HistoricalCharts() {
             yScale={{ type: "linear", min: 0 }}
             axisBottom={{ legend: "Year", legendOffset: 40, legendPosition: "middle" }}
             axisLeft={{ legend: "Reports", legendOffset: -50, legendPosition: "middle" }}
-            colors={{ scheme: "category10" }}
+            colors={() => "#fc4e2a"}
             pointSize={8}
             pointBorderWidth={2}
             useMesh={true}
@@ -108,7 +109,7 @@ export default function HistoricalCharts() {
             padding={0.3}
             valueScale={{ type: "linear" }}
             indexScale={{ type: "band", round: true }}
-            colors={() => "#93c5fd"}
+            colors={() => "#feb24c"}
             axisBottom={{
               legend: "City",
               legendOffset: 40,
@@ -137,7 +138,7 @@ export default function HistoricalCharts() {
             padAngle={0.7}
             cornerRadius={3}
             activeOuterRadiusOffset={8}
-            colors={{ scheme: "paired" }}
+            colors={{ scheme: "yellow_orange_red" }}
             borderWidth={1}
             borderColor={{ from: "color", modifiers: [["darker", 0.2]] }}
             arcLinkLabelsSkipAngle={10}

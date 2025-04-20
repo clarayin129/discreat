@@ -56,7 +56,7 @@ export default function ReportHeatMap() {
           legendPosition: "middle",
           legendOffset: -80
         }}
-        colors={{ type: "quantize", scheme: "blues" }}
+        colors={{ type: "quantize", scheme: "yellow_orange_red" }}
         borderWidth={1}
         borderColor={{ from: "color", modifiers: [["darker", 0.3]] }}
         labelTextColor={{ from: "color", modifiers: [["darker", 1.5]] }}
