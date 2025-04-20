@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { MongoClient, ObjectId } from "mongodb"
 import clientPromise from "@/app/lib/mongodb"
 import { Message } from "@/types/message"
 

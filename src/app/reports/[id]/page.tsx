@@ -1,5 +1,10 @@
-import ReportDetails from "./ReportDetails"
+import ReportDetails from "./ReportDetails";
 
-export default function Page({ params }: { params: { id: string } }) {
-  return <ReportDetails id={params.id} />
+export default async function ReportPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <ReportDetails id={id} />;
 }

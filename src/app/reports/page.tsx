@@ -62,6 +62,7 @@ export default function reports() {
       setLocation({ lat, lng });
       fetchNearbyReports(lat, lng);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [googleReady]);
 
   useEffect(() => {
