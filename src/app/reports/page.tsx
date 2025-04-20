@@ -25,10 +25,10 @@ export default function reports() {
       .then((data) => {
         const sorted = [...data].sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-        setReports(sorted)
-      })
-  }  
+        );
+        setReports(sorted);
+      });
+  };
 
   useEffect(() => {
     fetch("/api/reports")
@@ -36,11 +36,10 @@ export default function reports() {
       .then((data) => {
         const sorted = [...data].sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-        setAllReports(sorted)
-      })
-  }, [])
-  
+        );
+        setAllReports(sorted);
+      });
+  }, []);
 
   useEffect(() => {
     if (location) {
@@ -66,27 +65,12 @@ export default function reports() {
   }, [googleReady]);
 
   useEffect(() => {
-    console.log("🎯 Effect dependencies:", {
-      googleReady,
-      location,
-      mapRefReady: !!mapRef.current,
-      reportsCount: reports.length,
-    });
-
-    if (!mapRef.current || mapRef.current.offsetHeight === 0) {
-      console.warn("❌ mapRef has no visible height, delaying map render");
-      return;
-    }
-
-    if (!googleReady || !location || !mapRef.current) return;
+    if (!googleReady || !location || !mapRef.current || mapRef.current.offsetHeight === 0) return;
 
     const map = new google.maps.Map(mapRef.current, {
       center: location,
       zoom: 14,
     });
-
-    console.log("✅ Creating map with location:", location);
-    console.log("🧭 mapRef:", mapRef.current);
 
     new google.maps.Marker({
       position: location,
@@ -108,9 +92,7 @@ export default function reports() {
             <div style="font-size: 14px;">
               <strong>ID:</strong> ${r._id}<br/>
               <strong>Status:</strong> ${r.status}<br/>
-              <strong>Created:</strong> ${new Date(
-                r.createdAt
-              ).toLocaleString()}
+              <strong>Created:</strong> ${new Date(r.createdAt).toLocaleString()}
             </div>
           `,
         });
@@ -134,24 +116,24 @@ export default function reports() {
         return "bg-gray-300 text-gray-700";
     }
   };
-  
 
   return (
     <div className="p-6">
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => router.push("/dashboard")}
-          className="px-4 py-2 bg-gray-200 text-sm rounded hover:bg-gray-300"
+          className="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-300"
         >
           ← Back to Dashboard
         </button>
       </div>
+
       <h1 className="text-2xl font-bold mb-4">All Reports</h1>
-      <div className="max-h-[400px] overflow-y-auto border rounded mb-10">
+      <div className="max-h-[400px] overflow-y-auto rounded-lg mb-10">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-gray-100 z-10">
+          <thead className="sticky top-0 bg-slate-200 z-10">
             <tr className="text-left">
-              <th className="p-2">ID</th>
+              <th className="p-4">ID</th>
               <th className="p-2">Status</th>
               <th className="p-2">Police Dept</th>
               <th className="p-2">Created</th>
@@ -161,23 +143,29 @@ export default function reports() {
             </tr>
           </thead>
           <tbody>
-            {allReports.map((r: any) => (
-              <tr key={r._id} className="border-t">
-                <td className="p-2">{r._id}</td>
+            {allReports.map((r) => (
+              <tr key={r._id} className="border-t bg-slate-50">
+                <td className="p-4">{r._id}</td>
                 <td className="p-2">
-                  <p className="flex items-center gap-2">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(r.status)}`}>
+                  <span className={`px-2 py-2 rounded-lg text-xs font-medium ${getStatusColor(r.status)}`}>
                     {r.status}
                   </span>
-                  </p>
                 </td>
                 <td className="p-2">{r.policeDepartment}</td>
                 <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
-                <td className="p-2">{typeof r.responseTime === "number" ? `${r.responseTime} min` : "-"}</td>
-                <td className="p-2">{typeof r.resolutionTime === "number" ? `${r.resolutionTime} min` : "-"}</td>
+                <td className="p-2">
+                  {typeof r.responseTime === "number" ? `${r.responseTime} min` : "—"}
+                </td>
+                <td className="p-2">
+                  {typeof r.resolutionTime === "number" ? `${r.resolutionTime} min` : "—"}
+                </td>
                 <td className="p-2 space-x-2">
-                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-sm px-2 py-1 hover:bg-orange-500">View</button>
-                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-white bg-amber-400 rounded-sm px-2 py-1 hover:bg-amber-500">Chat</button>
+                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-lg px-4 py-2 hover:bg-orange-500">
+                    View
+                  </button>
+                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-white bg-amber-400 rounded-lg px-4 py-2 hover:bg-amber-500">
+                    Chat
+                  </button>
                 </td>
               </tr>
             ))}
@@ -190,17 +178,17 @@ export default function reports() {
         ref={inputRef}
         type="text"
         placeholder="Search a place..."
-        className="w-full p-2 border rounded mb-4"
+        className="w-full p-2 border rounded-lg mb-4"
       />
 
-      <div ref={mapRef} className="w-full h-[550px] border rounded mb-6" />
+      <div ref={mapRef} className="w-full h-[550px] border rounded-lg mb-6" />
 
       <h2 className="text-xl font-semibold mb-2">Nearby Reports (within 3 km)</h2>
-      <div className="max-h-[400px] overflow-y-auto border rounded">
+      <div className="max-h-[400px] overflow-y-auto rounded-lg-lg">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-gray-100 z-10">
+          <thead className="sticky top-0 bg-slate-200 z-10">
             <tr className="text-left">
-              <th className="p-2">ID</th>
+              <th className="p-4">ID</th>
               <th className="p-2">Status</th>
               <th className="p-2">Police Dept</th>
               <th className="p-2">Created</th>
@@ -208,21 +196,23 @@ export default function reports() {
             </tr>
           </thead>
           <tbody>
-            {reports.map((r: any) => (
-              <tr key={r._id} className="border-t">
-                <td className="p-2">{r._id}</td>
+            {reports.map((r) => (
+              <tr key={r._id} className="border-t bg-slate-50">
+                <td className="p-4">{r._id}</td>
                 <td className="p-2">
-                  <p className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(r.status)}`}>
-                      {r.status}
-                    </span>
-                  </p>
+                  <span className={`px-2 py-2 rounded-lg text-xs font-medium ${getStatusColor(r.status)}`}>
+                    {r.status}
+                  </span>
                 </td>
                 <td className="p-2">{r.policeDepartment}</td>
                 <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
                 <td className="p-2 space-x-2">
-                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-sm px-2 py-1 hover:bg-orange-500">View</button>
-                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-white bg-amber-400 rounded-sm px-2 py-1 hover:bg-amber-500">Chat</button>
+                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-lg px-4 py-2 hover:bg-orange-500">
+                    View
+                  </button>
+                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-white bg-amber-400 rounded-lg px-4 py-2 hover:bg-amber-500">
+                    Chat
+                  </button>
                 </td>
               </tr>
             ))}
@@ -232,3 +222,4 @@ export default function reports() {
     </div>
   );
 }
+

@@ -43,9 +43,15 @@ export default function ReportDetails({ id }: { id: string }) {
   const [notifications, setNotifications] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`/api/reports/${id}`).then(res => res.json()).then(setReport);
-    fetch(`/api/event-logs?reportId=${id}`).then(res => res.json()).then(setLogs);
-    fetch(`/api/notifications?reportId=${id}`).then(res => res.json()).then(setNotifications);
+    fetch(`/api/reports/${id}`)
+      .then((res) => res.json())
+      .then(setReport);
+    fetch(`/api/event-logs?reportId=${id}`)
+      .then((res) => res.json())
+      .then(setLogs);
+    fetch(`/api/notifications?reportId=${id}`)
+      .then((res) => res.json())
+      .then(setNotifications);
   }, [id]);
 
   useEffect(() => {
@@ -95,10 +101,16 @@ export default function ReportDetails({ id }: { id: string }) {
   return (
     <div className="p-6">
       <div className="flex gap-4 mb-6">
-        <button onClick={() => router.push("/reports")} className="px-4 py-2 bg-gray-200 text-sm rounded hover:bg-gray-300">
+        <button
+          onClick={() => router.push("/reports")}
+          className="px-4 py-2 bg-gray-200 text-sm rounded-lg hover:bg-gray-300"
+        >
           ← Back to reports
         </button>
-        <button onClick={() => router.push(`/chat/${report._id}`)} className="px-4 py-2 bg-orange-200 text-sm rounded hover:bg-orange-300">
+        <button
+          onClick={() => router.push(`/chat/${report._id}`)}
+          className="px-4 py-2 bg-orange-200 text-sm rounded-lg hover:bg-orange-300"
+        >
           💬 Open Chat
         </button>
       </div>
@@ -106,34 +118,63 @@ export default function ReportDetails({ id }: { id: string }) {
       <h1 className="text-2xl font-bold mb-4">Report Details</h1>
 
       <div className="my-3 flex gap-3 flex-wrap">
-        <span className={`px-2 py-1 rounded text-sm font-medium ${getStatusColor(report.status)}`}>
+        <span
+          className={`px-2 py-1 rounded-lg text-sm font-medium ${getStatusColor(
+            report.status
+          )}`}
+        >
           {report.status}
         </span>
-        <span className={`px-2 py-1 rounded text-sm font-medium ${getAppColor(report.deliveryApp)}`}>
+        <span
+          className={`px-2 py-1 rounded-lg text-sm font-medium ${getAppColor(
+            report.deliveryApp
+          )}`}
+        >
           {report.deliveryApp}
         </span>
       </div>
 
       <div className="space-y-1 text-sm mb-6">
-        <p><strong>ID:</strong> {report._id}</p>
-        <p><strong>Address:</strong> {report.address}</p>
-        <p><strong>City:</strong> {report.city}</p>
-        <p><strong>Country:</strong> {report.country}</p>
-        <p><strong>Police Department:</strong> {report.policeDepartment}</p>
-        <p><strong>Created:</strong> {new Date(report.createdAt).toLocaleString()}</p>
-        {report.responseTime && <p><strong>Response Time:</strong> {report.responseTime} min</p>}
-        {report.resolutionTime && <p><strong>Resolution Time:</strong> {report.resolutionTime} min</p>}
+        <p>
+          <strong>ID:</strong> {report._id}
+        </p>
+        <p>
+          <strong>Address:</strong> {report.address}
+        </p>
+        <p>
+          <strong>City:</strong> {report.city}
+        </p>
+        <p>
+          <strong>Country:</strong> {report.country}
+        </p>
+        <p>
+          <strong>Police Department:</strong> {report.policeDepartment}
+        </p>
+        <p>
+          <strong>Created:</strong>{" "}
+          {new Date(report.createdAt).toLocaleString()}
+        </p>
+        {report.responseTime && (
+          <p>
+            <strong>Response Time:</strong> {report.responseTime} min
+          </p>
+        )}
+        {report.resolutionTime && (
+          <p>
+            <strong>Resolution Time:</strong> {report.resolutionTime} min
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Event Logs Table */}
         <div className="w-full md:w-1/2">
           <h2 className="text-xl font-semibold mb-2">Event Logs</h2>
-          <div className="max-h-[400px] overflow-y-auto border rounded">
+          <div className="max-h-[400px] overflow-y-auto rounded-lg">
             <table className="w-full text-sm table-fixed">
-              <thead className="sticky top-0 bg-gray-100 z-10">
+              <thead className="sticky top-0 bg-slate-200 z-10">
                 <tr>
-                  <th className="p-2 text-left">Type</th>
+                  <th className="p-4 text-left">Type</th>
                   <th className="p-2 text-left">Time</th>
                   <th className="p-2 text-left">Location</th>
                   <th className="p-2 text-left">Responder</th>
@@ -142,10 +183,15 @@ export default function ReportDetails({ id }: { id: string }) {
               </thead>
               <tbody>
                 {logs.map((log) => (
-                  <tr key={log._id} className="border-t">
-                    <td className="p-2">{log.type}</td>
-                    <td className="p-2">{new Date(log.timestamp).toLocaleString()}</td>
-                    <td className="p-2">{log.location?.lat?.toFixed(4)}, {log.location?.lng?.toFixed(4)}</td>
+                  <tr key={log._id} className="border-t bg-slate-50">
+                    <td className="p-4">{log.type}</td>
+                    <td className="p-2">
+                      {new Date(log.timestamp).toLocaleString()}
+                    </td>
+                    <td className="p-2">
+                      {log.location?.lat?.toFixed(4)},{" "}
+                      {log.location?.lng?.toFixed(4)}
+                    </td>
                     <td className="p-2">{log.responderId || "—"}</td>
                     <td className="p-2">{log.note || "—"}</td>
                   </tr>
@@ -158,11 +204,11 @@ export default function ReportDetails({ id }: { id: string }) {
         {/* Notifications Table */}
         <div className="w-full md:w-1/2">
           <h2 className="text-xl font-semibold mb-2">Notifications</h2>
-          <div className="max-h-[400px] overflow-y-auto border rounded">
+          <div className="max-h-[400px] overflow-y-auto rounded-lg">
             <table className="w-full text-sm table-fixed">
-              <thead className="sticky top-0 bg-gray-100 z-10">
+              <thead className="sticky top-0 bg-slate-200 z-10">
                 <tr>
-                  <th className="p-2 text-left">Message</th>
+                  <th className="p-4 text-left">Message</th>
                   <th className="p-2 text-left">Type</th>
                   <th className="p-2 text-left">Time</th>
                   <th className="p-2 text-left">Responded</th>
@@ -171,9 +217,11 @@ export default function ReportDetails({ id }: { id: string }) {
               <tbody>
                 {notifications.map((note) => (
                   <tr key={note._id} className="border-t">
-                    <td className="p-2">{note.message}</td>
+                    <td className="p-4">{note.message}</td>
                     <td className="p-2">{note.type}</td>
-                    <td className="p-2">{new Date(note.timestamp).toLocaleString()}</td>
+                    <td className="p-2">
+                      {new Date(note.timestamp).toLocaleString()}
+                    </td>
                     <td className="p-2">{note.responded ? "✅" : "❌"}</td>
                   </tr>
                 ))}
@@ -186,7 +234,10 @@ export default function ReportDetails({ id }: { id: string }) {
       {logs.some((log) => log.location) && (
         <>
           <h2 className="text-xl font-semibold mt-8 mb-2">Location Trail</h2>
-          <div ref={mapRef} className="w-full h-[550px] rounded border mb-10" />
+          <div
+            ref={mapRef}
+            className="w-full h-[550px] rounded-lg border mb-10"
+          />
         </>
       )}
     </div>
