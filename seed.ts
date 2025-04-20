@@ -22,6 +22,15 @@ function jitter(coord: { lat: number; lng: number }) {
   }
 }
 
+function randomDeliveryApp(): "DoorDash" | "UberEats" | "Grubhub" | "Postmates" {
+  const weighted = [
+    "DoorDash", "DoorDash", "UberEats", "UberEats",
+    "Grubhub", "Postmates"
+  ]
+  const index = Math.floor(Math.random() * weighted.length)
+  return weighted[index] as "DoorDash" | "UberEats" | "Grubhub" | "Postmates"
+}
+
 async function seed() {
   try {
     await client.connect()
@@ -61,6 +70,7 @@ async function seed() {
           status: ["pending", "in progress", "resolved"][i % 3] as Report["status"],
           policeDepartment: group.pd,
           location: { type: "Point", coordinates: [coord.lng, coord.lat] },
+          deliveryApp: randomDeliveryApp(),
           responseTime: i % 3 !== 0 ? 5 + i : undefined,
           resolutionTime: i % 3 === 2 ? 10 + i : undefined
         })
@@ -112,7 +122,7 @@ async function seed() {
     await eventLogs.insertMany(eventSamples)
     await notifications.insertMany(notifSamples)
 
-    console.log("✅ Seeded 50 diverse reports across Davis, Sacramento, SF, and San Jose")
+    console.log("✅ Seeded 50+ diverse reports with delivery apps")
   } catch (err) {
     console.error("❌ Seed error:", err)
   } finally {
@@ -121,4 +131,5 @@ async function seed() {
 }
 
 seed()
+
 

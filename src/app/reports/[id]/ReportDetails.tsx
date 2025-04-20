@@ -124,6 +124,9 @@ export default function ReportDetails({ id }: { id: string }) {
           <strong>Resolution Time:</strong> {report.resolutionTime} min
         </p>
       )}
+      <p>
+        <strong>Delivery App:</strong> {report.deliveryApp}
+      </p>
 
       <h2 className="text-xl font-semibold mt-8 mb-2">Event Logs</h2>
       <table className="w-full border text-sm mb-6">

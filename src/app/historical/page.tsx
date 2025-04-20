@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ResponsiveLine } from "@nivo/line"
 import { ResponsiveBar } from "@nivo/bar"
+import { ResponsivePie } from "@nivo/pie"
 
 export default function HistoricalCharts() {
   const [reports, setReports] = useState<any[]>([])
@@ -48,6 +49,23 @@ export default function HistoricalCharts() {
     }))
   }
 
+  const pieData = () => {
+    const apps: Record<string, number> = {}
+    reports.forEach((r) => {
+      const app = r.deliveryApp || "Unknown"
+      apps[app] = (apps[app] || 0) + 1
+    })
+
+    const total = Object.values(apps).reduce((sum, val) => sum + val, 0)
+
+    return Object.entries(apps).map(([id, value]) => ({
+      id,
+      label: `${id} (${((value / total) * 100).toFixed(1)}%)`,
+      value,
+      raw: value // for tooltip use
+    }))
+  }
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex gap-4 mb-6">
@@ -79,7 +97,7 @@ export default function HistoricalCharts() {
         </div>
       </div>
 
-      <div>
+      <div className="mb-12">
         <h2 className="text-xl font-semibold mb-4">Average Response Time by City</h2>
         <div className="h-[400px] bg-white border rounded shadow p-4">
           <ResponsiveBar
@@ -90,16 +108,52 @@ export default function HistoricalCharts() {
             padding={0.3}
             valueScale={{ type: "linear" }}
             indexScale={{ type: "band", round: true }}
-            colors={{ scheme: "blues" }}
-            axisBottom={{ legend: "City", legendOffset: 40, legendPosition: "middle" }}
-            axisLeft={{ legend: "Avg Response Time (min)", legendOffset: -50, legendPosition: "middle" }}
+            colors={() => "#93c5fd"}
+            axisBottom={{
+              legend: "City",
+              legendOffset: 40,
+              legendPosition: "middle"
+            }}
+            axisLeft={{
+              legend: "Avg Response Time (min)",
+              legendOffset: -50,
+              legendPosition: "middle"
+            }}
             labelSkipWidth={12}
             labelSkipHeight={12}
             labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
+            borderColor={{ from: "color", modifiers: [["darker", 0.6]] }}
+          />
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Reports by Delivery App</h2>
+        <div className="h-[400px] bg-white border rounded shadow p-4">
+          <ResponsivePie
+            data={pieData()}
+            margin={{ top: 40, right: 80, bottom: 60, left: 80 }}
+            innerRadius={0.5}
+            padAngle={0.7}
+            cornerRadius={3}
+            activeOuterRadiusOffset={8}
+            colors={{ scheme: "paired" }}
+            borderWidth={1}
+            borderColor={{ from: "color", modifiers: [["darker", 0.2]] }}
+            arcLinkLabelsSkipAngle={10}
+            arcLinkLabelsTextColor="#333"
+            arcLinkLabelsThickness={2}
+            arcLinkLabelsColor={{ from: "color" }}
+            arcLabelsSkipAngle={10}
+            arcLabelsTextColor={{ from: "color", modifiers: [["darker", 2]] }}
+            tooltip={({ datum }) => (
+              <div className="text-sm px-2 py-1 bg-white border rounded shadow">
+                <strong>{datum.id}</strong>: {datum.data.raw} reports
+              </div>
+            )}
           />
         </div>
       </div>
     </div>
   )
 }
-

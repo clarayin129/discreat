@@ -3,6 +3,8 @@ import { ObjectId } from "mongodb"
 import clientPromise from "@/app/lib/mongodb"
 import { Report } from "@/types/report"
 
+const VALID_APPS = ["doordash", "ubereats", "grubhub", "postmates"]
+
 export async function GET(req: NextRequest) {
   const client = await clientPromise
   const db = client.db("safehub")
@@ -21,7 +23,7 @@ export async function GET(req: NextRequest) {
               type: "Point",
               coordinates: [parseFloat(lng), parseFloat(lat)]
             },
-            $maxDistance: 3000 // 1 km
+            $maxDistance: 3000
           }
         }
       })
@@ -40,6 +42,11 @@ export async function POST(req: NextRequest) {
   const reports = db.collection<Report>("reports")
 
   const body = await req.json()
+
+  if (!VALID_APPS.includes(body.deliveryApp)) {
+    return NextResponse.json({ error: "Invalid deliveryApp" }, { status: 400 })
+  }
+
   const newReport: Report = {
     address: body.address,
     city: body.city,
@@ -47,9 +54,10 @@ export async function POST(req: NextRequest) {
     policeDepartment: body.policeDepartment,
     createdAt: new Date().toISOString(),
     status: "pending",
-    location: body.location, // must include GeoJSON { type: "Point", coordinates: [lng, lat] }
+    location: body.location,
     responseTime: undefined,
-    resolutionTime: undefined
+    resolutionTime: undefined,
+    deliveryApp: body.deliveryApp
   }
 
   const result = await reports.insertOne(newReport)

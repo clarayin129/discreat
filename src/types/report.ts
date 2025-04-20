@@ -12,6 +12,7 @@ export interface Report {
   }
   responseTime?: number
   resolutionTime?: number
+  deliveryApp: "DoorDash" | "UberEats" | "Grubhub" | "Postmates"
 }
 
   

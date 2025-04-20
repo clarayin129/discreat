@@ -53,6 +53,14 @@ function jitter(coord) {
         lng: coord.lng + offsetLng
     };
 }
+function randomDeliveryApp() {
+    var weighted = [
+        "DoorDash", "DoorDash", "UberEats", "UberEats",
+        "Grubhub", "Postmates"
+    ];
+    var index = Math.floor(Math.random() * weighted.length);
+    return weighted[index];
+}
 function seed() {
     return __awaiter(this, void 0, void 0, function () {
         var db, reports, eventLogs, notifications, coordGroups, allReports_1, _i, coordGroups_1, group, i, baseCoord, coord, createdAt, inserted, ids, now_1, eventSamples, notifSamples, err_1;
@@ -102,6 +110,7 @@ function seed() {
                                 status: ["pending", "in progress", "resolved"][i % 3],
                                 policeDepartment: group.pd,
                                 location: { type: "Point", coordinates: [coord.lng, coord.lat] },
+                                deliveryApp: randomDeliveryApp(),
                                 responseTime: i % 3 !== 0 ? 5 + i : undefined,
                                 resolutionTime: i % 3 === 2 ? 10 + i : undefined
                             });
@@ -150,7 +159,7 @@ function seed() {
                     return [4 /*yield*/, notifications.insertMany(notifSamples)];
                 case 8:
                     _a.sent();
-                    console.log("✅ Seeded 50 diverse reports across Davis, Sacramento, SF, and San Jose");
+                    console.log("✅ Seeded 50+ diverse reports with delivery apps");
                     return [3 /*break*/, 12];
                 case 9:
                     err_1 = _a.sent();
