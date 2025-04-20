@@ -82,8 +82,10 @@ function seed() {
                     coordGroups = [
                         { city: "Davis", coords: [{ lat: 38.5382, lng: -121.7617 }], pd: "UC Davis PD", count: 20 },
                         { city: "Sacramento", coords: [{ lat: 38.5767, lng: -121.4934 }], pd: "Sacramento PD", count: 15 },
+                        { city: "Berkeley", coords: [{ lat: 37.8715, lng: -122.2730 }], pd: "Berkeley PD", count: 12 },
                         { city: "San Francisco", coords: [{ lat: 37.7749, lng: -122.4194 }], pd: "SFPD", count: 10 },
-                        { city: "San Jose", coords: [{ lat: 37.3382, lng: -121.8863 }], pd: "San Jose PD", count: 5 }
+                        { city: "San Jose", coords: [{ lat: 37.3382, lng: -121.8863 }], pd: "San Jose PD", count: 5 },
+                        { city: "Woodland", coords: [{ lat: 38.6785, lng: -121.7733 }], pd: "Woodland", count: 2 }
                     ];
                     allReports_1 = [];
                     for (_i = 0, coordGroups_1 = coordGroups; _i < coordGroups_1.length; _i++) {
@@ -91,7 +93,7 @@ function seed() {
                         for (i = 0; i < group.count; i++) {
                             baseCoord = group.coords[0];
                             coord = jitter(baseCoord);
-                            createdAt = randomDateBetween(2023, 2025).toISOString();
+                            createdAt = randomDateBetween(2020, 2025).toISOString();
                             allReports_1.push({
                                 address: "".concat(100 + i, " ").concat(group.city, " St"),
                                 city: group.city,

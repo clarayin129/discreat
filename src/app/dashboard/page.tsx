@@ -55,6 +55,12 @@ export default function DashboardPage() {
           >
             View All Reports →
           </button>
+          <button
+            onClick={() => router.push("/historical")}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 ml-2"
+            >
+            View Historical Data →
+          </button>
         </div>
 
         <div className="flex-1 min-w-[400px]">

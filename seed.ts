@@ -39,8 +39,10 @@ async function seed() {
     const coordGroups = [
       { city: "Davis", coords: [{ lat: 38.5382, lng: -121.7617 }], pd: "UC Davis PD", count: 20 },
       { city: "Sacramento", coords: [{ lat: 38.5767, lng: -121.4934 }], pd: "Sacramento PD", count: 15 },
+      { city: "Berkeley", coords: [{ lat: 37.8715, lng: -122.2730 }], pd: "Berkeley PD", count: 12 },
       { city: "San Francisco", coords: [{ lat: 37.7749, lng: -122.4194 }], pd: "SFPD", count: 10 },
-      { city: "San Jose", coords: [{ lat: 37.3382, lng: -121.8863 }], pd: "San Jose PD", count: 5 }
+      { city: "San Jose", coords: [{ lat: 37.3382, lng: -121.8863 }], pd: "San Jose PD", count: 5 },
+      { city: "Woodland", coords: [{ lat: 38.6785, lng: -121.7733 }], pd: "Woodland", count: 2 }
     ]
 
     const allReports: Report[] = []
@@ -49,7 +51,7 @@ async function seed() {
       for (let i = 0; i < group.count; i++) {
         const baseCoord = group.coords[0]
         const coord = jitter(baseCoord)
-        const createdAt = randomDateBetween(2023, 2025).toISOString()
+        const createdAt = randomDateBetween(2020, 2025).toISOString()
 
         allReports.push({
           address: `${100 + i} ${group.city} St`,
