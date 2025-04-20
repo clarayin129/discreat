@@ -10,7 +10,8 @@ In Figma, we prototyped the process of making a Discreat request through a deliv
 website to access your data.
 
 View the live site [here](https://discreat.vercel.app/dashboard).
-View the Figma [here](https://www.figma.com/design/TDwAa5xlecAAFym0EYjCfd/Discreat-Design--Aishwari-?node-id=4-605&t=M7lE5ClWaMlVy14O-1).
+View the Delivery App Figma [here](https://www.figma.com/design/TDwAa5xlecAAFym0EYjCfd/Discreat-Design--Aishwari-?node-id=4-605&t=M7lE5ClWaMlVy14O-1).
+View the Data Download Figma [here](https://www.figma.com/design/TDwAa5xlecAAFym0EYjCfd/Discreat-Design--Aishwari-?node-id=44-1254&t=4OYEiCY0S8Jo3KN9-1).
 
 Built with
   * React
