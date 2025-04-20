@@ -122,6 +122,20 @@ export default function reports() {
     });
   }, [googleReady, location, reports]);
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-red-400 text-white";
+      case "in progress":
+        return "bg-amber-400 text-white";
+      case "resolved":
+        return "bg-green-400 text-white";
+      default:
+        return "bg-gray-300 text-gray-700";
+    }
+  };
+  
+
   return (
     <div className="p-6">
       <div className="flex gap-4 mb-6">
@@ -150,14 +164,20 @@ export default function reports() {
             {allReports.map((r: any) => (
               <tr key={r._id} className="border-t">
                 <td className="p-2">{r._id}</td>
-                <td className="p-2">{r.status}</td>
+                <td className="p-2">
+                  <p className="flex items-center gap-2">
+                  <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(r.status)}`}>
+                    {r.status}
+                  </span>
+                  </p>
+                </td>
                 <td className="p-2">{r.policeDepartment}</td>
                 <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
                 <td className="p-2">{typeof r.responseTime === "number" ? `${r.responseTime} min` : "-"}</td>
                 <td className="p-2">{typeof r.resolutionTime === "number" ? `${r.resolutionTime} min` : "-"}</td>
                 <td className="p-2 space-x-2">
-                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-blue-500 underline">View</button>
-                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-green-500 underline">Chat</button>
+                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-sm px-2 py-1 hover:bg-orange-500">View</button>
+                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-white bg-amber-400 rounded-sm px-2 py-1 hover:bg-amber-500">Chat</button>
                 </td>
               </tr>
             ))}
@@ -173,7 +193,7 @@ export default function reports() {
         className="w-full p-2 border rounded mb-4"
       />
 
-      <div ref={mapRef} className="w-full h-[400px] border rounded mb-6" />
+      <div ref={mapRef} className="w-full h-[550px] border rounded mb-6" />
 
       <h2 className="text-xl font-semibold mb-2">Nearby Reports (within 3 km)</h2>
       <div className="max-h-[400px] overflow-y-auto border rounded">
@@ -191,12 +211,18 @@ export default function reports() {
             {reports.map((r: any) => (
               <tr key={r._id} className="border-t">
                 <td className="p-2">{r._id}</td>
-                <td className="p-2">{r.status}</td>
+                <td className="p-2">
+                  <p className="flex items-center gap-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(r.status)}`}>
+                      {r.status}
+                    </span>
+                  </p>
+                </td>
                 <td className="p-2">{r.policeDepartment}</td>
                 <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
                 <td className="p-2 space-x-2">
-                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-blue-500 underline">View</button>
-                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-green-500 underline">Chat</button>
+                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-white bg-orange-400 rounded-sm px-2 py-1 hover:bg-orange-500">View</button>
+                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-white bg-amber-400 rounded-sm px-2 py-1 hover:bg-amber-500">Chat</button>
                 </td>
               </tr>
             ))}

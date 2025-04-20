@@ -129,7 +129,7 @@ export default function ChatPage() {
         </button>
         <button
           onClick={() => router.push(`/reports/${id}`)}
-          className="bg-blue-100 px-4 py-2 rounded text-sm hover:bg-blue-200"
+          className="bg-orange-200 px-4 py-2 rounded text-sm hover:bg-orange-300"
         >
           📄 View Report Details
         </button>
