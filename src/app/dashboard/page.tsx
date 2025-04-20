@@ -3,6 +3,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import ReportHeatMap from "../../components/ReportHeatMap";
 
 export default function DashboardPage() {
@@ -20,39 +22,59 @@ export default function DashboardPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-red-400 text-white";
+        return "bg-red-400 text-white dark:bg-red-600";
       case "in progress":
-        return "bg-amber-400 text-white";
+        return "bg-amber-400 text-white dark:bg-yellow-600";
       case "resolved":
-        return "bg-green-400 text-white";
+        return "bg-green-400 text-white dark:bg-green-600";
       default:
-        return "bg-gray-300 text-gray-700";
+        return "bg-gray-300 text-gray-700 dark:bg-gray-500 dark:text-gray-100";
     }
   };
 
   return (
     <div className="p-6 max-w-7xl mx-auto my-auto">
-      <h1 className="text-3xl font-bold mb-6">Discreat Dashboard</h1>
+      {/* Logo and Title */}
+      <div className="flex items-center gap-3 mb-6">
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="Discreat Logo"
+            width={50}
+            height={50}
+            className="rounded-md"
+          />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Discr
+            <span className="font-extrabold text-gray-900 dark:text-yellow-400">
+              eat
+            </span>
+          </h1>
+        </Link>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left Column */}
         <div className="flex-1 min-w-[300px]">
-          <div className="bg-white shadow rounded-lg p-4 mb-6 border">
-            <h2 className="text-xl font-semibold text-orange-900">Total Reports</h2>
-            <p className="text-4xl mt-2 text-orange-600 font-bold">
+          {/* Total Reports Box */}
+          <div className="bg-white dark:bg-[#1a1a1a] shadow rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-orange-400">Total Reports</h2>
+            <p className="text-4xl mt-2 font-bold text-orange-600 dark:text-yellow-400">
               {reports.length}
             </p>
           </div>
 
-          <div className="bg-white shadow rounded-lg p-4 border mb-6">
-            <h2 className="text-xl font-semibold mb-4 text-orange-900">Recent Reports</h2>
+          {/* Recent Reports Box */}
+          <div className="bg-white dark:bg-[#1a1a1a] shadow rounded-lg p-4 border mb-6 border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-orange-400 mb-4">Recent Reports</h2>
             {recentReports.map((r) => (
               <div
                 key={r._id}
-                className="border-b py-2 flex justify-between items-center"
+                className="border-b border-gray-200 dark:border-gray-700 py-2 flex justify-between items-center"
               >
                 <div className="flex flex-col gap-1">
-                  <p className="font-medium text-orange-900">{r.policeDepartment}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-medium text-gray-800 dark:text-white">{r.policeDepartment}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {new Date(r.createdAt).toLocaleString()}
                   </p>
                   <p className="flex items-center gap-2">
@@ -67,7 +89,7 @@ export default function DashboardPage() {
                 </div>
                 <button
                   onClick={() => router.push(`/reports/${r._id}`)}
-                  className="text-white bg-orange-400 rounded-lg px-2 py-1 hover:bg-orange-500"
+                  className="text-white bg-orange-400 rounded-lg px-2 py-1 hover:bg-orange-500 dark:bg-orange-600 dark:hover:bg-orange-500"
                 >
                   View
                 </button>
@@ -75,23 +97,25 @@ export default function DashboardPage() {
             ))}
           </div>
 
+          {/* Buttons */}
           <button
             onClick={() => router.push("/reports")}
-            className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
+            className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 dark:hover:bg-orange-500"
           >
             View All Reports →
           </button>
           <button
             onClick={() => router.push("/historical")}
-            className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 ml-2"
+            className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 ml-2"
           >
             View Historical Data →
           </button>
         </div>
 
+        {/* Right Column - Map */}
         <div className="flex-1 min-w-[400px]">
-          <h2 className="text-xl font-semibold mb-4">Reports by City</h2>
-          <div className="h-[400px] bg-white border rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-orange-400">Reports by City</h2>
+          <div className="h-[400px] bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 rounded-lg shadow">
             <ReportHeatMap />
           </div>
         </div>
