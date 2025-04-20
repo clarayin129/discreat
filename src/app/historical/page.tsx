@@ -66,16 +66,17 @@ export default function HistoricalCharts() {
       id,
       label: `${id} (${((value / total) * 100).toFixed(1)}%)`,
       value,
-      raw: value, // for tooltip use
+      raw: value,
     }));
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto text-white] min-h-screen">
+      {/* Back Button */}
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => router.push("/dashboard")}
-          className="px-4 py-2 bg-gray-200 text-orange-900 text-sm rounded-lg hover:bg-gray-300"
+          className="px-4 py-2 bg-gray-800 text-sm rounded-lg hover:bg-gray-700"
         >
           ← Back to Dashboard
         </button>
@@ -83,9 +84,10 @@ export default function HistoricalCharts() {
 
       <h1 className="text-3xl font-bold mb-6">Historical Charts</h1>
 
+      {/* Line Chart */}
       <div className="mb-12">
         <h2 className="text-xl font-semibold mb-4">Cases Over the Years</h2>
-        <div className="h-[400px] bg-white border rounded-lg shadow p-4">
+        <div className="h-[400px] bg-[#1a1a1a] border border-gray-700 rounded-lg shadow p-4">
           <ResponsiveLine
             data={lineData()}
             margin={{ top: 50, right: 30, bottom: 60, left: 60 }}
@@ -95,6 +97,9 @@ export default function HistoricalCharts() {
               legend: "Year",
               legendOffset: 40,
               legendPosition: "middle",
+              tickSize: 5,
+              tickPadding: 5,
+              tickRotation: 0,
             }}
             axisLeft={{
               legend: "Reports",
@@ -104,13 +109,28 @@ export default function HistoricalCharts() {
             colors={() => "#fc4e2a"}
             pointSize={8}
             pointBorderWidth={2}
+            pointBorderColor="#fff"
             useMesh={true}
+            theme={{
+              axis: {
+                ticks: {
+                  text: {
+                    fill: "#ffffff", // make tick labels white
+                  },
+                },
+                legend: {
+                  text: {
+                    fill: "#ffffff", // make axis legends white
+                  },
+                },
+              },
+            }}
             tooltip={({ point }) => (
               <div
                 style={{
                   padding: "6px 12px",
                   background: "#1f1f1f",
-                  color: "#fdba74",
+                  color: "#ffffff",
                   borderRadius: "4px",
                   fontSize: "0.875rem",
                   boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
@@ -118,16 +138,17 @@ export default function HistoricalCharts() {
               >
                 <strong>{point.data.xFormatted}</strong>: {point.data.yFormatted} reports
               </div>
-            )}            
+            )} 
           />
         </div>
       </div>
 
+      {/* Bar Chart */}
       <div className="mb-12">
         <h2 className="text-xl font-semibold mb-4">
           Average Response Time by City
         </h2>
-        <div className="h-[400px] bg-white border rounded-lg shadow p-4">
+        <div className="h-[400px] bg-[#1a1a1a] border border-gray-700 rounded-lg shadow p-4">
           <ResponsiveBar
             data={barData()}
             keys={["avgResponse"]}
@@ -151,12 +172,26 @@ export default function HistoricalCharts() {
             labelSkipHeight={12}
             labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
             borderColor={{ from: "color", modifiers: [["darker", 0.6]] }}
+            theme={{
+              axis: {
+                ticks: {
+                  text: {
+                    fill: "#ffffff", // make tick labels white
+                  },
+                },
+                legend: {
+                  text: {
+                    fill: "#ffffff", // make axis legends white
+                  },
+                },
+              },
+            }}
             tooltip={({ id, value, indexValue }) => (
               <div
                 style={{
                   padding: "6px 12px",
                   background: "#1f1f1f",
-                  color: "#fdba74",
+                  color: "#ffffff",
                   borderRadius: "4px",
                   fontSize: "0.875rem",
                   boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
@@ -164,14 +199,16 @@ export default function HistoricalCharts() {
               >
                 <strong>{indexValue}</strong>: {value} min avg
               </div>
-            )}            
+            )} 
           />
+          
         </div>
       </div>
 
+      {/* Pie Chart */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Reports by Delivery App</h2>
-        <div className="h-[400px] bg-white border rounded-lg shadow p-4">
+        <div className="h-[400px] bg-[#1a1a1a] border border-gray-700 rounded-lg shadow p-4">
           <ResponsivePie
             data={pieData()}
             margin={{ top: 40, right: 80, bottom: 60, left: 80 }}
@@ -183,25 +220,30 @@ export default function HistoricalCharts() {
             borderWidth={1}
             borderColor={{ from: "color", modifiers: [["darker", 0.2]] }}
             arcLinkLabelsSkipAngle={10}
-            arcLinkLabelsTextColor="#333"
+            arcLinkLabelsTextColor="#e5e5e5"
             arcLinkLabelsThickness={2}
             arcLinkLabelsColor={{ from: "color" }}
             arcLabelsSkipAngle={10}
             arcLabelsTextColor={{ from: "color", modifiers: [["darker", 2]] }}
+            theme={{
+              axis: {
+                ticks: {
+                  text: {
+                    fill: "#ffffff", // make tick labels white
+                  },
+                },
+                legend: {
+                  text: {
+                    fill: "#ffffff", // make axis legends white
+                  },
+                },
+              },
+            }}
             tooltip={({ datum }) => (
-              <div
-                style={{
-                  padding: "6px 12px",
-                  background: "#1f1f1f",
-                  color: "#fdba74",
-                  borderRadius: "4px",
-                  fontSize: "0.875rem",
-                  boxShadow: "0px 2px 6px rgba(0,0,0,0.2)",
-                }}
-              >
+              <div className="text-sm px-2 py-1 bg-[#1f1f1f] border border-gray-700 rounded-lg shadow text-white">
                 <strong>{datum.id}</strong>: {datum.data.raw} reports
               </div>
-            )}            
+            )}
           />
         </div>
       </div>
