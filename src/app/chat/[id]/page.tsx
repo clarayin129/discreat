@@ -62,23 +62,47 @@ export default function ChatPage() {
     fetch(`/api/reports/${id}`).then((res) => res.json()).then(setReport);
 
     const handleMessageAnalyzed = async (payload: { message: string; resolved: number }) => {
-      const sender = payload.resolved ? "responder" : "system";
       const msgText = payload.resolved
         ? `AI thinks this issue is resolved: "${payload.message}"`
         : `AI thinks this issue is still unresolved: "${payload.message}"`;
-
+    
+      // Log the AI message
       await fetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reportId: id,
-          sender,
+          sender: "system",
           text: msgText,
         }),
       });
-
+    
+      if (payload.resolved) {
+        await fetch("/api/reports", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id,
+            status: "resolved",
+          }),
+        });
+    
+        await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            reportId: id,
+            sender: "system",
+            text: "Marked report as resolved.",
+          }),
+        });
+    
+        fetch(`/api/reports/${id}`).then((res) => res.json()).then(setReport);
+      }
+    
       fetchMessages();
     };
+     
 
     socket.on("messageAnalyzed", handleMessageAnalyzed);
     return () => {
