@@ -7,6 +7,21 @@ import { Notification } from "./src/types/notification"
 const uri = process.env.MONGODB_URI!
 const client = new MongoClient(uri)
 
+function randomDateBetween(yearStart: number, yearEnd: number) {
+  const start = new Date(`${yearStart}-01-01`).getTime()
+  const end = new Date(`${yearEnd}-12-31`).getTime()
+  return new Date(start + Math.random() * (end - start))
+}
+
+function jitter(coord: { lat: number; lng: number }) {
+  const offsetLat = (Math.random() - 0.5) * 0.02
+  const offsetLng = (Math.random() - 0.5) * 0.02
+  return {
+    lat: coord.lat + offsetLat,
+    lng: coord.lng + offsetLng
+  }
+}
+
 async function seed() {
   try {
     await client.connect()
@@ -16,112 +31,73 @@ async function seed() {
     const eventLogs = db.collection<EventLog>("event_logs")
     const notifications = db.collection<Notification>("notifications")
 
-    // Create 2dsphere index for geospatial queries
     await reports.createIndex({ location: "2dsphere" })
-
     await reports.deleteMany({})
     await eventLogs.deleteMany({})
     await notifications.deleteMany({})
 
+    const coordGroups = [
+      { city: "Davis", coords: [{ lat: 38.5382, lng: -121.7617 }], pd: "UC Davis PD", count: 20 },
+      { city: "Sacramento", coords: [{ lat: 38.5767, lng: -121.4934 }], pd: "Sacramento PD", count: 15 },
+      { city: "San Francisco", coords: [{ lat: 37.7749, lng: -122.4194 }], pd: "SFPD", count: 10 },
+      { city: "San Jose", coords: [{ lat: 37.3382, lng: -121.8863 }], pd: "San Jose PD", count: 5 }
+    ]
+
+    const allReports: Report[] = []
+
+    for (const group of coordGroups) {
+      for (let i = 0; i < group.count; i++) {
+        const baseCoord = group.coords[0]
+        const coord = jitter(baseCoord)
+        const createdAt = randomDateBetween(2023, 2025).toISOString()
+
+        allReports.push({
+          address: `${100 + i} ${group.city} St`,
+          city: group.city,
+          country: "USA",
+          createdAt,
+          status: ["pending", "in progress", "resolved"][i % 3] as Report["status"],
+          policeDepartment: group.pd,
+          location: { type: "Point", coordinates: [coord.lng, coord.lat] },
+          responseTime: i % 3 !== 0 ? 5 + i : undefined,
+          resolutionTime: i % 3 === 2 ? 10 + i : undefined
+        })
+      }
+    }
+
+    const inserted = await reports.insertMany(allReports)
+    const ids = Object.values(inserted.insertedIds).map(id => id.toString())
+
     const now = new Date()
 
-    const ucDavisCoords = [
-      { lat: 38.5382, lng: -121.7617 },
-      { lat: 38.5388, lng: -121.7621 },
-      { lat: 38.5390, lng: -121.7630 },
-      { lat: 38.5379, lng: -121.7600 },
-      { lat: 38.5365, lng: -121.7580 }
-    ]
+    const eventSamples: EventLog[] = ids.map((id, i) => {
+      const report = allReports[i]
+      const base = new Date(report.createdAt).getTime()
+      const [baseLng, baseLat] = report.location.coordinates
+      const randomOffset = () => (Math.random() - 0.5) * 0.004
+      const trail = Array.from({ length: 4 }, () => ({
+        lat: baseLat + randomOffset(),
+        lng: baseLng + randomOffset()
+      }))
 
-    const capitolCoords = [
-      { lat: 38.5767, lng: -121.4934 },
-      { lat: 38.5770, lng: -121.4941 },
-      { lat: 38.5759, lng: -121.4929 },
-      { lat: 38.5761, lng: -121.4915 },
-      { lat: 38.5755, lng: -121.4930 }
-    ]
+      const logs: EventLog[] = [
+        { reportId: id, type: "help_requested", timestamp: new Date(base).toISOString(), note: "Initial request submitted", location: trail[0] },
+        { reportId: id, type: "responded", timestamp: new Date(base + 300000).toISOString(), responderId: `responder_${i}`, location: trail[1] },
+        { reportId: id, type: "arrived", timestamp: new Date(base + 600000).toISOString(), note: "Arrived at the scene", location: trail[2] }
+      ]
 
-    const coords = [...ucDavisCoords, ...capitolCoords]
-
-    const sampleReports: Report[] = coords.map((coord, i) => {
-      const offset = i * 300000 // 5 min apart
-      return {
-        address: `${100 + i} Test St`,
-        city: i < 5 ? "Davis" : "Sacramento",
-        country: "USA",
-        createdAt: new Date(now.getTime() + offset).toISOString(),
-        status: ["pending", "in progress", "resolved"][i % 3] as Report["status"],
-        policeDepartment: i < 5 ? "UC Davis PD" : "Sacramento PD",
-        location: {
-          type: "Point",
-          coordinates: [coord.lng, coord.lat]
-        },
-        responseTime: i % 3 !== 0 ? 5 + i : undefined,
-        resolutionTime: i % 3 === 2 ? 10 + i : undefined
+      if (i % 3 === 2) {
+        logs.push({
+          reportId: id,
+          type: "resolved",
+          timestamp: new Date(base + 900000).toISOString(),
+          note: "Case closed",
+          location: trail[3]
+        })
       }
-    })
 
-    const inserted = await reports.insertMany(sampleReports)
-    const ids = Object.values(inserted.insertedIds).map((id) => id.toString())
-
-    const eventSamples: EventLog[] = ids.flatMap((id, i) => {
-        const base = now.getTime() + i * 300000
-        const baseCoord = coords[i]
-        const [baseLat, baseLng] = [baseCoord.lat, baseCoord.lng]
-        const randomOffset = () => (Math.random() - 0.5) * 0.004
-      
-        const trail: { lat: number; lng: number }[] = [
-            { lat: baseLat, lng: baseLng },
-            {
-              lat: baseLat + randomOffset(),
-              lng: baseLng + randomOffset(),
-            },
-            {
-              lat: baseLat + randomOffset(),
-              lng: baseLng + randomOffset(),
-            },
-            {
-                lat: baseLat + randomOffset(),
-                lng: baseLng + randomOffset(),
-              },
-        ]
-      
-        const logs: EventLog[] = [
-          {
-            reportId: id,
-            type: "help_requested",
-            timestamp: new Date(base).toISOString(),
-            note: "Initial request submitted",
-            location: trail[0]
-          },
-          {
-            reportId: id,
-            type: "responded",
-            timestamp: new Date(base + 300000).toISOString(),
-            responderId: `responder_${i}`,
-            location: trail[1]
-          },
-          {
-            reportId: id,
-            type: "arrived",
-            timestamp: new Date(base + 600000).toISOString(),
-            note: "Arrived at the scene",
-            location: trail[2]
-          }
-        ]
-      
-        if (i % 3 === 2) {
-          logs.push({
-            reportId: id,
-            type: "resolved",
-            timestamp: new Date(base + 900000).toISOString(),
-            note: "Case closed",
-            location: trail[2]
-          })
-        }
-      
-        return logs
-      })      
+      return logs
+    }).flat()
 
     const notifSamples: Notification[] = ids.map((id, i) => ({
       reportId: id,
@@ -134,7 +110,7 @@ async function seed() {
     await eventLogs.insertMany(eventSamples)
     await notifications.insertMany(notifSamples)
 
-    console.log("✅ Seeded 10 reports around UC Davis and Sacramento with event logs and notifications")
+    console.log("✅ Seeded 50 diverse reports across Davis, Sacramento, SF, and San Jose")
   } catch (err) {
     console.error("❌ Seed error:", err)
   } finally {
@@ -143,3 +119,4 @@ async function seed() {
 }
 
 seed()
+

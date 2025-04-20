@@ -20,14 +20,25 @@ export default function reports() {
   const fetchNearbyReports = (lat: number, lng: number) => {
     fetch(`/api/reports?lat=${lat}&lng=${lng}`)
       .then((res) => res.json())
-      .then(setReports);
-  };
+      .then((data) => {
+        const sorted = [...data].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        setReports(sorted)
+      })
+  }  
 
   useEffect(() => {
     fetch("/api/reports")
       .then((res) => res.json())
-      .then(setAllReports);
-  }, []);
+      .then((data) => {
+        const sorted = [...data].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        setAllReports(sorted)
+      })
+  }, [])
+  
 
   useEffect(() => {
     if (location) {
@@ -120,42 +131,37 @@ export default function reports() {
         </button>
       </div>
       <h1 className="text-2xl font-bold mb-4">All Reports</h1>
-
-      <table className="w-full border text-sm mb-10">
-        <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-2">ID</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Police Dept</th>
-            <th className="p-2">Created</th>
-            <th className="p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {allReports.map((r: any) => (
-            <tr key={r._id} className="border-t">
-              <td className="p-2">{r._id}</td>
-              <td className="p-2">{r.status}</td>
-              <td className="p-2">{r.policeDepartment}</td>
-              <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
-              <td className="p-2 space-x-2">
-                <button
-                  onClick={() => router.push(`/reports/${r._id}`)}
-                  className="text-blue-500 underline"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => router.push(`/chat/${r._id}`)}
-                  className="text-green-500 underline"
-                >
-                  Chat
-                </button>
-              </td>
+      <div className="max-h-[400px] overflow-y-auto border rounded mb-10">
+        <table className="w-full text-sm">
+          <thead className="sticky top-0 bg-gray-100 z-10">
+            <tr className="text-left">
+              <th className="p-2">ID</th>
+              <th className="p-2">Status</th>
+              <th className="p-2">Police Dept</th>
+              <th className="p-2">Created</th>
+              <th className="p-2">Response Time</th>
+              <th className="p-2">Resolution Time</th>
+              <th className="p-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {allReports.map((r: any) => (
+              <tr key={r._id} className="border-t">
+                <td className="p-2">{r._id}</td>
+                <td className="p-2">{r.status}</td>
+                <td className="p-2">{r.policeDepartment}</td>
+                <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
+                <td className="p-2">{typeof r.responseTime === "number" ? `${r.responseTime} min` : "-"}</td>
+                <td className="p-2">{typeof r.resolutionTime === "number" ? `${r.resolutionTime} min` : "-"}</td>
+                <td className="p-2 space-x-2">
+                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-blue-500 underline">View</button>
+                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-green-500 underline">Chat</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <h2 className="text-xl font-bold mb-4">Search Reports by Place</h2>
       <input
@@ -167,44 +173,34 @@ export default function reports() {
 
       <div ref={mapRef} className="w-full h-[400px] border rounded mb-6" />
 
-      <h2 className="text-xl font-semibold mb-2">
-        Nearby Reports (within 3 km)
-      </h2>
-      <table className="w-full border text-sm">
-        <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-2">ID</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Police Dept</th>
-            <th className="p-2">Created</th>
-            <th className="p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reports.map((r: any) => (
-            <tr key={r._id} className="border-t">
-              <td className="p-2">{r._id}</td>
-              <td className="p-2">{r.status}</td>
-              <td className="p-2">{r.policeDepartment}</td>
-              <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
-              <td className="p-2 space-x-2">
-                <button
-                  onClick={() => router.push(`/reports/${r._id}`)}
-                  className="text-blue-500 underline"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => router.push(`/chat/${r._id}`)}
-                  className="text-green-500 underline"
-                >
-                  Chat
-                </button>
-              </td>
+      <h2 className="text-xl font-semibold mb-2">Nearby Reports (within 3 km)</h2>
+      <div className="max-h-[400px] overflow-y-auto border rounded">
+        <table className="w-full text-sm">
+          <thead className="sticky top-0 bg-gray-100 z-10">
+            <tr className="text-left">
+              <th className="p-2">ID</th>
+              <th className="p-2">Status</th>
+              <th className="p-2">Police Dept</th>
+              <th className="p-2">Created</th>
+              <th className="p-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {reports.map((r: any) => (
+              <tr key={r._id} className="border-t">
+                <td className="p-2">{r._id}</td>
+                <td className="p-2">{r.status}</td>
+                <td className="p-2">{r.policeDepartment}</td>
+                <td className="p-2">{new Date(r.createdAt).toLocaleString()}</td>
+                <td className="p-2 space-x-2">
+                  <button onClick={() => router.push(`/reports/${r._id}`)} className="text-blue-500 underline">View</button>
+                  <button onClick={() => router.push(`/chat/${r._id}`)} className="text-green-500 underline">Chat</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

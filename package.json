@@ -10,13 +10,19 @@
     "seed": "ts-node seed.ts"
   },
   "dependencies": {
+    "@nivo/bar": "^0.88.0",
+    "@nivo/core": "^0.88.0",
+    "@nivo/geo": "^0.88.0",
+    "@nivo/heatmap": "^0.88.0",
+    "@nivo/line": "^0.88.0",
+    "@nivo/pie": "^0.88.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongodb": "^6.15.0",
     "next": "15.3.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"
   },
