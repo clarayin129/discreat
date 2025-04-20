@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useEffect, useState } from "react"
@@ -46,14 +47,14 @@ export default function ReportHeatMap() {
           tickPadding: 5,
           legend: "Category",
           legendPosition: "middle",
-          legendOffset: 36
+          legendOffset: -36
         }}
         axisLeft={{
           tickSize: 5,
           tickPadding: 5,
           legend: "City",
           legendPosition: "middle",
-          legendOffset: -40
+          legendOffset: -80
         }}
         colors={{ type: "quantize", scheme: "blues" }}
         borderWidth={1}

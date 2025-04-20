@@ -88,12 +88,13 @@ function seed() {
                 case 5:
                     _a.sent();
                     coordGroups = [
-                        { city: "Davis", coords: [{ lat: 38.5382, lng: -121.7617 }], pd: "UC Davis PD", count: 20 },
-                        { city: "Sacramento", coords: [{ lat: 38.5767, lng: -121.4934 }], pd: "Sacramento PD", count: 15 },
-                        { city: "Berkeley", coords: [{ lat: 37.8715, lng: -122.2730 }], pd: "Berkeley PD", count: 12 },
-                        { city: "San Francisco", coords: [{ lat: 37.7749, lng: -122.4194 }], pd: "SFPD", count: 10 },
-                        { city: "San Jose", coords: [{ lat: 37.3382, lng: -121.8863 }], pd: "San Jose PD", count: 5 },
-                        { city: "Woodland", coords: [{ lat: 38.6785, lng: -121.7733 }], pd: "Woodland", count: 2 }
+                        { city: "Davis", coords: [{ lat: 38.5382, lng: -121.7617 }], pd: "UC Davis PD", count: 25 },
+                        { city: "Sacramento", coords: [{ lat: 38.5767, lng: -121.4934 }], pd: "Sacramento PD", count: 32 },
+                        { city: "Berkeley", coords: [{ lat: 37.8715, lng: -122.2730 }], pd: "Berkeley PD", count: 23 },
+                        { city: "San Francisco", coords: [{ lat: 37.7749, lng: -122.4194 }], pd: "SFPD", count: 42 },
+                        { city: "Fremont", coords: [{ lat: 37.5483, lng: -121.9886 }], pd: "Fremont PD", count: 14 },
+                        { city: "San Jose", coords: [{ lat: 37.3382, lng: -121.8863 }], pd: "San Jose PD", count: 8 },
+                        { city: "Woodland", coords: [{ lat: 38.6785, lng: -121.7733 }], pd: "Woodland", count: 3 }
                     ];
                     allReports_1 = [];
                     for (_i = 0, coordGroups_1 = coordGroups; _i < coordGroups_1.length; _i++) {
