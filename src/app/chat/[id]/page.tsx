@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 
@@ -20,6 +21,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [report, setReport] = useState<any>(null);
+  const [senderRole, setSenderRole] = useState<"discreat" | "responder">("discreat");
 
   const fetchMessages = async () => {
     const res = await fetch(`/api/messages?reportId=${id}`);
@@ -29,22 +31,30 @@ export default function ChatPage() {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
+  
     const message: Message = {
       reportId: id,
-      sender: "discreat",
+      sender: senderRole,
       text: input,
     };
-
+  
     await fetch("/api/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(message),
     });
-
-    socket.emit("newMessage", input);
+  
+    // Only analyze if the responder sent the message
+    if (senderRole === "responder") {
+      socket.emit("newMessage", input);
+    }
+  
     setInput("");
     fetchMessages();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") sendMessage();
   };
 
   useEffect(() => {
@@ -105,6 +115,33 @@ export default function ChatPage() {
         </div>
       )}
 
+      <div className="mb-2 text-sm text-gray-700 italic">
+        Currently sending as: <strong>{senderRole}</strong>
+      </div>
+
+      <div className="flex items-center gap-2 mb-4">
+        <button
+          onClick={() => setSenderRole("discreat")}
+          className={`px-3 py-1 rounded text-sm ${
+            senderRole === "discreat"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 text-gray-700"
+          }`}
+        >
+          Discreat
+        </button>
+        <button
+          onClick={() => setSenderRole("responder")}
+          className={`px-3 py-1 rounded text-sm ${
+            senderRole === "responder"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 text-gray-700"
+          }`}
+        >
+          Responder
+        </button>
+      </div>
+
       <div className="border rounded p-4 h-64 overflow-y-scroll bg-white mb-4">
         {messages.map((m, i) => (
           <div key={i} className={`mb-2 ${
@@ -121,8 +158,9 @@ export default function ChatPage() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="flex-1 p-2 border rounded"
-          placeholder="Type a message..."
+          placeholder="Type a message and press Enter…"
         />
         <button onClick={sendMessage} className="bg-blue-500 text-white px-4 rounded">
           Send
@@ -131,5 +169,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
-
