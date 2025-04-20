@@ -89,7 +89,7 @@ export default function reports() {
 
         const infoWindow = new google.maps.InfoWindow({
           content: `
-            <div style="font-size: 14px;">
+            <div style="font-size: 14px; color: black;">
               <strong>ID:</strong> ${r._id}<br/>
               <strong>Status:</strong> ${r.status}<br/>
               <strong>Created:</strong> ${new Date(r.createdAt).toLocaleString()}
