@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-sans: var(--font-urbanist);
+  --font-mono: var(--font-fira);
+  --foreground: #111827;
+  --accent: #eb2a14;
+
+  /* Angular gradient based on your color stops */
+  --background: conic-gradient(
+    from 180deg at center,
+    #EB2A14 0%,
+    #F25729 25%,
+    #F89233 38%,
+    #FBAF35 44%,
+    #FDC238 50%,
+    #FDCB39 75%,
+    #FAA734 88%,
+    #EF461D 94%,
+    #EB2B14 100%
+  );
 }
 
+/* Tailwind theme hook */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
+/* 🌒 Dark Mode – deeper versions of same tones */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #f3f4f6;
+    --accent: #f97452;
+
+    --background: conic-gradient(
+      from 180deg at center,
+      #4b0c07 0%,
+      #69200f 25%,
+      #7a3e17 38%,
+      #8f561b 44%,
+      #a06e1e 50%,
+      #a87d1d 75%,
+      #a95e1b 88%,
+      #84200d 94%,
+      #4c0d05 100%
+    );
   }
 }
 
+/* ✨ Apply it globally */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  transition: background 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
 }
